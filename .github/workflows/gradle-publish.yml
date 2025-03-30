@@ -1,0 +1,62 @@
+# Automatically build the project and run any configured tests for every push
+# and submitted pull request. This can help catch issues that only occur on
+# certain platforms or Java versions, and provides a first line of defence
+# against bad commits.
+
+name: PlugifyCraft Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        java: [ '17' ]
+      fail-fast: false
+    name: ${{ matrix.os }}
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Execute build
+        run: ./gradlew --info --stacktrace build
+      - name: Execute jlink
+        run: ./gradlew --info --stacktrace jlink
+      - name: Execute jpackage
+        run: ./gradlew --info --stacktrace jpackage
+      - name: Upload DMG as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PlugifyCraft-jdk${{ matrix.java }}-macos-dmg
+          path: build/installer/*.dmg
+      - name: Upload EXE as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PlugifyCraft-jdk${{ matrix.java }}-windows-exe
+          path: build/installer/*.exe
+      - name: Upload MSI as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PlugifyCraft-jdk${{ matrix.java }}-windows-msi
+          path: build/installer/*.msi
+      - name: Upload DEB as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PlugifyCraft-jdk${{ matrix.java }}-linux-deb
+          path: build/installer/*.deb
+      - name: Upload RPM as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PlugifyCraft-jdk${{ matrix.java }}-linux-rpm
+          path: build/installer/*.rpm
