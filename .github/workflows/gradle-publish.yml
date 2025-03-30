@@ -36,27 +36,27 @@ jobs:
       - name: Execute jpackage
         run: ./gradlew --info --stacktrace jpackage
       - name: Upload DMG as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: PlugifyCraft-jdk${{ matrix.java }}-macos-dmg
           path: build/installer/*.dmg
       - name: Upload EXE as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: PlugifyCraft-jdk${{ matrix.java }}-windows-exe
           path: build/installer/*.exe
       - name: Upload MSI as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: PlugifyCraft-jdk${{ matrix.java }}-windows-msi
           path: build/installer/*.msi
       - name: Upload DEB as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: PlugifyCraft-jdk${{ matrix.java }}-linux-deb
           path: build/installer/*.deb
       - name: Upload RPM as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: PlugifyCraft-jdk${{ matrix.java }}-linux-rpm
           path: build/installer/*.rpm
