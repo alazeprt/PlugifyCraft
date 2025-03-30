@@ -1,0 +1,11 @@
+.scroll-pane {
+    -fx-background-color: #e7f5ff;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #e7f5ff;
+}
+
+.scroll-pane > .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
