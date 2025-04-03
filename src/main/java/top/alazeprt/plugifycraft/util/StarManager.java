@@ -3,6 +3,8 @@ package top.alazeprt.plugifycraft.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import top.alazeprt.pclib.util.Author;
 import top.alazeprt.pclib.util.HangarPlugin;
@@ -18,12 +20,82 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
 
 public class StarManager {
+
+    // instance
+
+    private final GridPane starPane;
+    private final Label label; // 提示消息
+    private final ChoiceBox<String> starFolders; // 收藏夹选择框
+    private final PluginPaneManager pluginPaneManager;
+
+    public StarManager(GridPane starPane, Label label, ChoiceBox<String> starFolders, PluginPaneManager pluginPaneManager) {
+        this.starPane = starPane;
+        this.label = label;
+        this.starFolders = starFolders;
+        this.pluginPaneManager = pluginPaneManager;
+    }
+
+    public void addAllDataToPane() {
+        List<Plugin> stars = StarManager.getFolder(starFolders.getValue());
+        int maxCol = 3;
+        int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
+        if (maxRow > starPane.getRowCount()) {
+            for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
+                addLine(starPane);
+            }
+        }
+        int col = 0, row = 0;
+        for (Plugin plugin : stars) {
+            starPane.add(pluginPaneManager.getPluginPane(plugin), col, row);
+            col++;
+            if (col == maxCol) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    public void addSearchDataToPane(String keyword) {
+        List<Plugin> oldStars = StarManager.getFolder(starFolders.getValue());
+        List<Plugin> stars = new ArrayList<>();
+        for (Plugin plugin : oldStars) {
+            if (plugin.name.toLowerCase().contains(keyword.toLowerCase())) {
+                stars.add(plugin);
+            }
+        }
+        starPane.getChildren().clear();
+        int maxCol = 3;
+        int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
+        if (maxRow > starPane.getRowCount()) {
+            for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
+                addLine(starPane);
+            }
+        }
+        int col = 0, row = 0;
+        for (Plugin plugin : stars) {
+            starPane.add(pluginPaneManager.getPluginPane(plugin), col, row);
+            col++;
+            if (col == maxCol) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    public void addLine(GridPane pane) {
+        pane.setPrefHeight(pane.getPrefHeight() + 20 + 415/4.0);
+        pane.addRow(pane.getRowCount());
+    }
+
+    // static
 
     public static Map<String, List<Plugin>> starMap = new ConcurrentHashMap<>();
     public static Thread thread;
@@ -34,11 +106,13 @@ public class StarManager {
             list.add(plugin);
             starMap.put(folder, list);
         } else {
-            if (starMap.get(folder).contains(plugin)) {
-                starMap.get(folder).remove(plugin);
-            } else {
-                starMap.get(folder).add(plugin);
+            for (Plugin p : starMap.get(folder)) {
+                if (p.id == plugin.id) {
+                    starMap.get(folder).remove(p);
+                    return;
+                }
             }
+            starMap.get(folder).add(plugin);
         }
     }
 
