@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" stylesheets="@scroll.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
    <children>
       <AnchorPane fx:id="topPane" prefHeight="60.0" prefWidth="1040.0" style="-fx-background-color: #228be6;">
          <children>
@@ -48,7 +48,7 @@
       </AnchorPane>
       <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
          <children>
-            <ScrollPane layoutY="49.0" prefHeight="475.0" prefWidth="1040.0" stylesheets="@scroll.css">
+            <ScrollPane layoutY="49.0" prefHeight="475.0" prefWidth="1040.0">
                <content>
                   <AnchorPane prefHeight="475.0" prefWidth="1020.0">
                      <children>
@@ -69,7 +69,7 @@
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <JFXButton layoutX="776.0" layoutY="12.0" onAction="#onSearch" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
+            <JFXButton layoutX="776.0" layoutY="9.0" onAction="#onSearch" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
             <JFXCheckBox fx:id="searchHangar" checkedColor="#4dabf7" layoutX="604.0" layoutY="15.0" text="Hangar (Paper)" />
             <JFXCheckBox fx:id="searchSpigotMC" checkedColor="#4dabf7" layoutX="501.0" layoutY="15.0" text="SpigotMC" />
             <Label layoutX="200.0" layoutY="14.0" text="插件搜索">
@@ -81,7 +81,43 @@
          </children>
       </AnchorPane>
       <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false" />
-      <AnchorPane fx:id="starMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false" />
+      <AnchorPane fx:id="starMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
+         <children>
+            <JFXButton layoutX="776.0" layoutY="9.0" onAction="#onSearchInStar" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
+            <Label layoutX="200.0" layoutY="14.0" text="收藏夹搜索">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="starSearchField" layoutX="294.0" layoutY="12.0" prefHeight="24.0" prefWidth="180.0" />
+            <ChoiceBox fx:id="starFolders" layoutX="576.0" layoutY="12.0" prefWidth="150.0" />
+            <Label layoutX="514.0" layoutY="14.0" text="收藏夹">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <ScrollPane layoutY="49.0" prefHeight="475.0" prefWidth="1040.0">
+               <content>
+                  <AnchorPane prefHeight="475.0" prefWidth="1020.0">
+                     <children>
+                        <GridPane fx:id="starPane" alignment="CENTER" hgap="60.0" layoutX="30.0" prefHeight="475.0" prefWidth="960.0" vgap="20.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+         </children></AnchorPane>
       <AnchorPane fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false" />
       <AnchorPane fx:id="pluginViewPane" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
@@ -97,8 +133,8 @@
             <Label fx:id="pluginUpdate" layoutX="826.0" layoutY="302.0" text="更新于: " />
             <Label fx:id="pluginCategory" layoutX="826.0" layoutY="329.0" text="类别: " />
             <WebView fx:id="pluginDesc" layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800" style="-fx-page-fill: #e7f5ff;" />
-            <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10;" text="下载" />
-            <JFXButton layoutX="117.0" layoutY="463.0" onAction="#onPluginStar" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="收藏" />
+            <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="下载" />
+            <JFXButton fx:id="starButton" layoutX="117.0" layoutY="463.0" onAction="#onPluginStar" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="收藏" />
             <Label layoutX="824.0" layoutY="427.0" text="下载至: " />
             <Label layoutX="826.0" layoutY="390.0" text="收藏至:" />
             <ChoiceBox fx:id="starsChoice" layoutX="873.0" layoutY="385.0" prefHeight="25.0" prefWidth="150.0" />

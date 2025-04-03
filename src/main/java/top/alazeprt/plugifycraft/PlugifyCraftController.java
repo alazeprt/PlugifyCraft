@@ -1,5 +1,6 @@
 package top.alazeprt.plugifycraft;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
@@ -16,6 +17,7 @@ import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 import top.alazeprt.plugifycraft.util.PaneManager;
+import top.alazeprt.plugifycraft.util.StarManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -59,17 +61,28 @@ public class PlugifyCraftController {
     public Label pluginCategory;
     public ChoiceBox<String> starsChoice;
     public TextField downloadPath;
+    public JFXButton starButton;
+
+    // stars
+    public TextField starSearchField;
+    public ChoiceBox<String> starFolders;
+    public GridPane starPane;
+
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public List<Thread> requestThreads = new ArrayList<>();
-    public PaneManager paneManager = new PaneManager();
-    public List<String> starFolders = new ArrayList<>();
+    public PaneManager mainPaneManager = new PaneManager();
+    public Plugin nowViewingPlugin;
 
-    public void initialize() {
+    public void initialize() throws IOException {
+        List<String> starFolders = new ArrayList<>();
         starFolders.add("默认收藏夹");
         starsChoice.getItems().addAll(starFolders);
+        this.starFolders.getItems().addAll(starFolders);
         starsChoice.setValue("默认收藏夹");
-        paneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
+        this.starFolders.setValue("默认收藏夹");
+        StarManager.load();
+        mainPaneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
         label = new Label("从 SpigotMC 获取数据中...");
         label.setFont(Font.font("System", 12));
         label.setTextFill(Color.WHITE);
@@ -96,7 +109,7 @@ public class PlugifyCraftController {
                     explorePane.add(getPluginPane(finalList.get(9)), 0, 3);
                     explorePane.add(getPluginPane(finalList.get(10)), 1, 3);
                     explorePane.add(getPluginPane(finalList.get(11)), 2, 3);
-                    addLine();
+                    addLine(explorePane);
                     explorePane.add(getPluginPane(finalList.get(12)), 0, 4);
                     explorePane.add(getPluginPane(finalList.get(13)), 1, 4);
                     explorePane.add(getPluginPane(finalList.get(14)), 2, 4);
@@ -154,8 +167,9 @@ public class PlugifyCraftController {
         anchorPane.getChildren().add(icon);
         anchorPane.getChildren().add(update);
         anchorPane.setOnMouseClicked((event) -> {
+            nowViewingPlugin = plugin;
             requestThreads.forEach(Thread::interrupt);
-            paneManager.handleMainPane(pluginViewPane);
+            mainPaneManager.handleMainPane(pluginViewPane);
             label.setText("正在拉取插件详细信息...");
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
@@ -172,6 +186,13 @@ public class PlugifyCraftController {
             pluginDownloads.setText("下载量: " + plugin.downloads);
             pluginUpdate.setText("更新于: " + format.format(plugin.updateDate));
             pluginRelease.setText("发布于: " + format.format(plugin.releaseDate));
+            if (!StarManager.isStarred(starsChoice.getValue(), nowViewingPlugin)) {
+                starButton.setText("收藏");
+                starButton.setStyle("-fx-border-color: #339af0; -fx-border-radius: 10px;");
+            } else {
+                starButton.setText("取消收藏");
+                starButton.setStyle("-fx-border-color: #ff6b6b; -fx-border-radius: 10px;");
+            }
             pluginIcon.setImage(new Image(new ByteArrayInputStream(Base64.getDecoder().decode(plugin.image.getBytes(StandardCharsets.UTF_8)))));
             Thread thread = new Thread(() -> {
                 Plugin plugin1 = pluginPanes.get(anchorPane);
@@ -202,9 +223,9 @@ public class PlugifyCraftController {
         return anchorPane;
     }
 
-    public void addLine() {
-        explorePane.setPrefHeight(explorePane.getPrefHeight() + 20 + 415/4.0);
-        explorePane.addRow(explorePane.getRowCount());
+    public void addLine(GridPane pane) {
+        pane.setPrefHeight(pane.getPrefHeight() + 20 + 415/4.0);
+        pane.addRow(pane.getRowCount());
     }
 
     public void onSearch() {
@@ -346,27 +367,61 @@ public class PlugifyCraftController {
     }
 
     public void onExplorePane() {
+        nowViewingPlugin = null;
         requestThreads.forEach(Thread::interrupt);
-        paneManager.handleMainPane(exploreMain);
+        mainPaneManager.handleMainPane(exploreMain);
     }
 
     public void onManagePane() {
+        nowViewingPlugin = null;
         requestThreads.forEach(Thread::interrupt);
-        paneManager.handleMainPane(manageMain);
+        mainPaneManager.handleMainPane(manageMain);
     }
 
     public void onStarPane() {
+        nowViewingPlugin = null;
         requestThreads.forEach(Thread::interrupt);
-        paneManager.handleMainPane(starMain);
+        mainPaneManager.handleMainPane(starMain);
+        if (StarManager.hasFinishedInit) {
+            starPane.getChildren().clear();
+            List<Plugin> stars = StarManager.getFolder("默认收藏夹");
+            int maxCol = 3;
+            int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
+            if (maxRow > starPane.getRowCount()) {
+                for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
+                    addLine(starPane);
+                }
+            }
+            int col = 0, row = 0;
+            for (Plugin plugin : stars) {
+                starPane.add(getPluginPane(plugin), col, row);
+                col++;
+                if (col == maxCol) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
     }
 
     public void onSettingsPane() {
+        nowViewingPlugin = null;
         requestThreads.forEach(Thread::interrupt);
-        paneManager.handleMainPane(settingsMain);
+        mainPaneManager.handleMainPane(settingsMain);
     }
 
     public void onPluginDownload() {}
-    public void onPluginStar() {}
+    public void onPluginStar() {
+        if (nowViewingPlugin == null) return;
+        StarManager.handle(starsChoice.getValue(), nowViewingPlugin);
+        if (!StarManager.isStarred(starsChoice.getValue(), nowViewingPlugin)) {
+            starButton.setText("收藏");
+            starButton.setStyle("-fx-border-color: #339af0; -fx-border-radius: 10px;");
+        } else {
+            starButton.setText("取消收藏");
+            starButton.setStyle("-fx-border-color: #ff6b6b; -fx-border-radius: 10px;");
+        }
+    }
 
     public void onChooseDownloadPath() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -375,5 +430,8 @@ public class PlugifyCraftController {
         if (file != null) {
             downloadPath.setText(file.getAbsolutePath());
         }
+    }
+
+    public void onSearchInStar() {
     }
 }

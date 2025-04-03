@@ -5,6 +5,8 @@ module top.alazeprt.plugifycraft.plugifycraft {
     requires com.jfoenix;
     requires javafx.web;
     requires java.desktop;
+    requires java.security.jgss;
+    requires com.google.gson;
 
 
     opens top.alazeprt.plugifycraft to javafx.fxml;
