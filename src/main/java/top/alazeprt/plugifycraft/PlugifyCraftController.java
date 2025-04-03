@@ -432,5 +432,35 @@ public class PlugifyCraftController {
     }
 
     public void onSearchInStar() {
+        label.setText("搜索中...");
+        label.setFont(Font.font("System", 12));
+        label.setLayoutX(870);
+        label.setLayoutY(22);
+        label.setVisible(true);
+        List<Plugin> oldStars = StarManager.getFolder(starFolders.getValue());
+        List<Plugin> stars = new ArrayList<>();
+        for (Plugin plugin : oldStars) {
+            if (plugin.name.toLowerCase().contains(starSearchField.getText().toLowerCase())) {
+                stars.add(plugin);
+            }
+        }
+        starPane.getChildren().clear();
+        int maxCol = 3;
+        int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
+        if (maxRow > starPane.getRowCount()) {
+            for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
+                addLine(starPane);
+            }
+        }
+        int col = 0, row = 0;
+        for (Plugin plugin : stars) {
+            starPane.add(getPluginPane(plugin), col, row);
+            col++;
+            if (col == maxCol) {
+                col = 0;
+                row++;
+            }
+        }
+        label.setVisible(false);
     }
 }
