@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 
@@ -171,13 +172,7 @@ public class PluginPaneManager {
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
             label.setLayoutY(22);
-            label.setVisible(true);
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ignored) {}
-                Platform.runLater(() -> label.setVisible(false));
-            }).start();
+            delayedLabel(label, Duration.ofSeconds(2));
         } else if (searchSpigotMC && !searchHangar) {
             label.setText("搜索中...");
             label.setFont(Font.font("System", 12));
@@ -219,11 +214,8 @@ public class PluginPaneManager {
             label.setFont(Font.font("System", 12));
             label.setLayoutX(820);
             label.setLayoutY(22);
-            label.setVisible(true);
+            delayedLabel(label, Duration.ofSeconds(2));
             Thread thread = new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ignored) {}
                 Platform.runLater(() -> {
                     label.setText("搜索中...");
                 });
@@ -265,5 +257,16 @@ public class PluginPaneManager {
             }
             label.setVisible(false);
         });
+    }
+
+    public void delayedLabel(Label label, Duration delay) {
+        label.setVisible(true);
+        new Thread(() -> {
+            this.label = label;
+            try {
+                Thread.sleep(delay.toMillis());
+            } catch (InterruptedException ignored) {}
+            Platform.runLater(() -> label.setVisible(false));
+        }).start();
     }
 }

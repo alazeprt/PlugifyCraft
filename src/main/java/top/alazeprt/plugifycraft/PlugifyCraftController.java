@@ -20,6 +20,7 @@ import top.alazeprt.plugifycraft.util.StarManager;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.*;
 
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
@@ -59,6 +60,10 @@ public class PlugifyCraftController {
     public TextField starSearchField;
     public ChoiceBox<String> starFolders;
     public GridPane starPane;
+
+    // settings
+    public TextField createStarField;
+    public ChoiceBox<String> deleteStarChoiceBox;
     
     public PluginPaneManager pluginPaneManager;
     public StarManager starManager;
@@ -67,13 +72,13 @@ public class PlugifyCraftController {
         label = new Label();
         pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
-        List<String> starFolders = new ArrayList<>();
-        starFolders.add("默认收藏夹");
-        starsChoice.getItems().addAll(starFolders);
-        this.starFolders.getItems().addAll(starFolders);
+        StarManager.load();
+        starsChoice.getItems().addAll(StarManager.starMap.keySet());
+        this.starFolders.getItems().addAll(StarManager.starMap.keySet());
+        deleteStarChoiceBox.getItems().addAll(StarManager.starMap.keySet());
         starsChoice.setValue("默认收藏夹");
         this.starFolders.setValue("默认收藏夹");
-        StarManager.load();
+        deleteStarChoiceBox.setValue("默认收藏夹");
         pluginPaneManager.mainPaneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
         label = new Label("从 SpigotMC 获取数据中...");
         label.setFont(Font.font("System", 12));
@@ -113,6 +118,10 @@ public class PlugifyCraftController {
             }
         }).start();
         searchSpigotMC.setSelected(true);
+        starFolders.setOnAction(event -> {
+            starPane.getChildren().clear();
+            starManager.addAllDataToPane();
+        });
     }
 
 
@@ -183,5 +192,52 @@ public class PlugifyCraftController {
         label.setVisible(true);
         starManager.addSearchDataToPane(starSearchField.getText());
         label.setVisible(false);
+    }
+
+    public void onCreateStarFolder() {
+        if (createStarField.getText().isBlank()) {
+            label.setText("收藏夹名不能为空!");
+            label.setFont(Font.font("System", 12));
+            label.setLayoutX(870);
+            label.setLayoutY(22);
+            label.setTextFill(Color.RED);
+            pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
+        } else if (StarManager.contains(createStarField.getText())) {
+            label.setText("收藏夹名已存在!");
+            label.setFont(Font.font("System", 12));
+            label.setLayoutX(870);
+            label.setLayoutY(22);
+            label.setTextFill(Color.RED);
+            pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
+        } else {
+            StarManager.createFolder(createStarField.getText());
+            resetStarFolders();
+        }
+    }
+
+    private void resetStarFolders() {
+        starsChoice.getItems().clear();
+        starFolders.getItems().clear();
+        deleteStarChoiceBox.getItems().clear();
+        starsChoice.getItems().addAll(StarManager.starMap.keySet());
+        starFolders.getItems().addAll(StarManager.starMap.keySet());
+        deleteStarChoiceBox.getItems().addAll(StarManager.starMap.keySet());
+        starsChoice.setValue("默认收藏夹");
+        starFolders.setValue("默认收藏夹");
+        deleteStarChoiceBox.setValue("默认收藏夹");
+    }
+
+    public void onDeleteStarFolder() {
+        if (deleteStarChoiceBox.getValue().equals("默认收藏夹")) {
+            label.setText("默认收藏夹不能删除!");
+            label.setFont(Font.font("System", 12));
+            label.setLayoutX(870);
+            label.setLayoutY(22);
+            label.setTextFill(Color.RED);
+            pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
+        } else {
+            StarManager.starMap.remove(deleteStarChoiceBox.getValue());
+            resetStarFolders();
+        }
     }
 }

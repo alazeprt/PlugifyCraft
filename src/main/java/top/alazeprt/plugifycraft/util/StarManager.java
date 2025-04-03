@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -124,6 +125,12 @@ public class StarManager {
         return starMap.get(folder).contains(plugin);
     }
 
+    public static void createFolder(String folder) {
+        if (!starMap.containsKey(folder)) {
+            starMap.put(folder, new ArrayList<>());
+        }
+    }
+
     public static void clear() {
         starMap.clear();
     }
@@ -225,5 +232,9 @@ public class StarManager {
         } else {
             starMap.put("默认收藏夹", new ArrayList<>());
         }
+    }
+
+    public static boolean contains(String folder) {
+        return starMap.containsKey(folder);
     }
 }

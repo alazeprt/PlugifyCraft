@@ -118,7 +118,28 @@
                </content>
             </ScrollPane>
          </children></AnchorPane>
-      <AnchorPane fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false" />
+      <AnchorPane fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
+         <children>
+            <ScrollPane prefHeight="525.0" prefWidth="1040.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="520.0" prefWidth="1030.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="收藏夹设置" underline="true">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="58.0" text="新建收藏夹: " />
+                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="54.0" prefWidth="150.0" promptText="收藏夹名称..." />
+                        <JFXButton layoutX="272.0" layoutY="51.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
+                        <Label layoutX="14.0" layoutY="95.0" text="删除收藏夹: " />
+                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="93.0" prefWidth="150.0" />
+                        <JFXButton layoutX="272.0" layoutY="91.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+         </children></AnchorPane>
       <AnchorPane fx:id="pluginViewPane" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
             <ImageView fx:id="pluginIcon" fitHeight="200.0" fitWidth="200.0" layoutX="826.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
