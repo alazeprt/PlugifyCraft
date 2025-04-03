@@ -49,6 +49,7 @@ jlink {
     }
 
     jpackage {
+        appVersion = version.toString()
         installerOutputDir = file("$buildDir/installer")
         if(org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             installerOptions.add("--win-dir-chooser")
@@ -56,6 +57,10 @@ jlink {
             installerOptions.add("--win-menu")
             installerOptions.add("--win-shortcut")
         }
+    }
+
+    mergedModule {
+        requires('com.google.gson')
     }
 }
 
