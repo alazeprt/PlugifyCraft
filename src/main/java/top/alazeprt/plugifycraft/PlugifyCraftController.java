@@ -1,13 +1,8 @@
 package top.alazeprt.plugifycraft;
 
 import com.jfoenix.controls.JFXCheckBox;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
-import javafx.event.Event;
-import javafx.event.EventTarget;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -17,14 +12,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
-import javafx.util.Duration;
-import org.w3c.dom.NodeList;
+import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
+import top.alazeprt.plugifycraft.util.PaneManager;
 
-import javax.swing.plaf.nimbus.State;
-import javax.swing.text.Document;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -63,11 +57,19 @@ public class PlugifyCraftController {
     public Label pluginUpdate;
     public Label pluginRelease;
     public Label pluginCategory;
+    public ChoiceBox<String> starsChoice;
+    public TextField downloadPath;
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public List<Thread> requestThreads = new ArrayList<>();
+    public PaneManager paneManager = new PaneManager();
+    public List<String> starFolders = new ArrayList<>();
 
     public void initialize() {
+        starFolders.add("默认收藏夹");
+        starsChoice.getItems().addAll(starFolders);
+        starsChoice.setValue("默认收藏夹");
+        paneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
         label = new Label("从 SpigotMC 获取数据中...");
         label.setFont(Font.font("System", 12));
         label.setTextFill(Color.WHITE);
@@ -152,7 +154,8 @@ public class PlugifyCraftController {
         anchorPane.getChildren().add(icon);
         anchorPane.getChildren().add(update);
         anchorPane.setOnMouseClicked((event) -> {
-            handleMainPane(pluginViewPane);
+            requestThreads.forEach(Thread::interrupt);
+            paneManager.handleMainPane(pluginViewPane);
             label.setText("正在拉取插件详细信息...");
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
@@ -343,58 +346,34 @@ public class PlugifyCraftController {
     }
 
     public void onExplorePane() {
-        handleMainPane(exploreMain);
+        requestThreads.forEach(Thread::interrupt);
+        paneManager.handleMainPane(exploreMain);
     }
 
     public void onManagePane() {
-        handleMainPane(manageMain);
+        requestThreads.forEach(Thread::interrupt);
+        paneManager.handleMainPane(manageMain);
     }
 
     public void onStarPane() {
-        handleMainPane(starMain);
+        requestThreads.forEach(Thread::interrupt);
+        paneManager.handleMainPane(starMain);
     }
 
     public void onSettingsPane() {
-        handleMainPane(settingsMain);
+        requestThreads.forEach(Thread::interrupt);
+        paneManager.handleMainPane(settingsMain);
     }
 
     public void onPluginDownload() {}
     public void onPluginStar() {}
 
-    public void handleMainPane(AnchorPane pane) {
-        requestThreads.forEach(Thread::interrupt);
-        if (exploreMain.isVisible()) {
-            if (pane == exploreMain) return;
-            fadeOutAnchorPane(exploreMain, Duration.millis(200));
-        } else if (manageMain.isVisible()) {
-            if (pane == manageMain) return;
-            fadeOutAnchorPane(manageMain, Duration.millis(200));
-        } else if (starMain.isVisible()) {
-            if (pane == starMain) return;
-            fadeOutAnchorPane(starMain, Duration.millis(200));
-        } else if (settingsMain.isVisible()) {
-            if (pane == settingsMain) return;
-            fadeOutAnchorPane(settingsMain, Duration.millis(200));
-        } else if (pluginViewPane.isVisible()) {
-            if (pane == pluginViewPane) return;
-            fadeOutAnchorPane(pluginViewPane, Duration.millis(200));
+    public void onChooseDownloadPath() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("选择下载路径");
+        File file = directoryChooser.showDialog(null);
+        if (file != null) {
+            downloadPath.setText(file.getAbsolutePath());
         }
-        fadeInAnchorPane(pane, Duration.millis(200));
-    }
-
-    public void fadeOutAnchorPane(AnchorPane pane, Duration duration) {
-        FadeTransition fadeTransition = new FadeTransition(duration, pane);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.0);
-        fadeTransition.play();
-        fadeTransition.setOnFinished(event -> pane.setVisible(false));
-    }
-
-    public void fadeInAnchorPane(AnchorPane pane, Duration duration) {
-        pane.setVisible(true);
-        FadeTransition fadeTransition = new FadeTransition(duration, pane);
-        fadeTransition.setFromValue(0.0);
-        fadeTransition.setToValue(1.0);
-        fadeTransition.play();
     }
 }

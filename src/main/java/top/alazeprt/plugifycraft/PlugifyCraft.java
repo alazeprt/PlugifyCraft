@@ -6,12 +6,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import top.alazeprt.pclib.repository.HangarRepository;
 import top.alazeprt.pclib.repository.SpigotMCRepository;
-import top.alazeprt.pclib.util.Plugin;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 public class PlugifyCraft extends Application {
 
