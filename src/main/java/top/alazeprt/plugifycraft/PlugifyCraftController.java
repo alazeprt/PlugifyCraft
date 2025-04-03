@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CancellationException;
@@ -74,7 +75,7 @@ public class PlugifyCraftController {
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
 
-    public void initialize() throws IOException {
+    public void initialize() throws IOException, ParseException {
         List<String> starFolders = new ArrayList<>();
         starFolders.add("默认收藏夹");
         starsChoice.getItems().addAll(starFolders);
@@ -382,24 +383,22 @@ public class PlugifyCraftController {
         nowViewingPlugin = null;
         requestThreads.forEach(Thread::interrupt);
         mainPaneManager.handleMainPane(starMain);
-        if (StarManager.hasFinishedInit) {
-            starPane.getChildren().clear();
-            List<Plugin> stars = StarManager.getFolder("默认收藏夹");
-            int maxCol = 3;
-            int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
-            if (maxRow > starPane.getRowCount()) {
-                for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
-                    addLine(starPane);
-                }
+        starPane.getChildren().clear();
+        List<Plugin> stars = StarManager.getFolder("默认收藏夹");
+        int maxCol = 3;
+        int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;
+        if (maxRow > starPane.getRowCount()) {
+            for (int i = 1; i <= maxRow - starPane.getRowCount(); i++) {
+                addLine(starPane);
             }
-            int col = 0, row = 0;
-            for (Plugin plugin : stars) {
-                starPane.add(getPluginPane(plugin), col, row);
-                col++;
-                if (col == maxCol) {
-                    col = 0;
-                    row++;
-                }
+        }
+        int col = 0, row = 0;
+        for (Plugin plugin : stars) {
+            starPane.add(getPluginPane(plugin), col, row);
+            col++;
+            if (col == maxCol) {
+                col = 0;
+                row++;
             }
         }
     }
