@@ -3,6 +3,7 @@ package top.alazeprt.plugifycraft;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,6 +16,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.plugifycraft.util.CacheManager;
+import top.alazeprt.plugifycraft.util.ManageManager;
 import top.alazeprt.plugifycraft.util.PluginPaneManager;
 import top.alazeprt.plugifycraft.util.StarManager;
 
@@ -70,9 +72,14 @@ public class PlugifyCraftController {
     // load data
     public AnchorPane loadDataPane;
     public Label loadDataLabel;
+
+    // manage
+    public AnchorPane managePane;
+    public GridPane downloadsPane;
     
     public PluginPaneManager pluginPaneManager;
     public StarManager starManager;
+    public ManageManager manageManager;
 
     public void initialize() throws IOException, ParseException {
         label = new Label("");
@@ -84,8 +91,10 @@ public class PlugifyCraftController {
         loadDataPane.setVisible(true);
         pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
+        manageManager = new ManageManager(downloadsPane);
         StarManager.load();
         CacheManager.load();
+        manageManager.reload();
         starsChoice.getItems().addAll(StarManager.starMap.keySet());
         this.starFolders.getItems().addAll(StarManager.starMap.keySet());
         deleteStarChoiceBox.getItems().addAll(StarManager.starMap.keySet());
@@ -176,7 +185,7 @@ public class PlugifyCraftController {
         loadDataPane.setVisible(false);
     }
 
-    public void onPluginDownload() {
+    public void onPluginDownload() throws IOException {
         pluginPaneManager.download();
     }
 
@@ -253,5 +262,9 @@ public class PlugifyCraftController {
             StarManager.starMap.remove(deleteStarChoiceBox.getValue());
             resetStarFolders();
         }
+    }
+
+    public void onDownloadsPane() {
+        manageManager.reload();
     }
 }

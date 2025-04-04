@@ -8,21 +8,30 @@ import top.alazeprt.pclib.util.SpigotPlugin;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
 
 public class CacheManager {
 
-    private static List<CachePlugin> cachePluginList = new ArrayList<>();
+    private static final List<CachePlugin> cachePluginList = new ArrayList<>();
+    protected static final Queue<DownloadInfo> downloadQueue = new ArrayDeque<>();
+    protected static final Queue<DownloadInfo> completedQueue = new ArrayDeque<>();
+    protected static DownloadInfo currentDownloadInfo;
+
+    public static String getStatus(DownloadInfo downloadInfo) {
+        if (downloadQueue.contains(downloadInfo)) return "等待中";
+        if (Objects.equals(currentDownloadInfo, downloadInfo)) return "下载中";
+        if (completedQueue.contains(downloadInfo)) return "已完成";
+        return "未知";
+    }
 
     public static boolean download(Plugin plugin, int version, File path) throws IOException {
         String platform = plugin instanceof SpigotPlugin ? "Spigot" : "Hangar";
         for (CachePlugin cachePlugin : cachePluginList) {
             if (cachePlugin.id() == plugin.id && cachePlugin.platform().equals(platform) &&
-                    cachePlugin.version() == version) {
+                    cachePlugin.version() == version && cachePlugin.cacheFile() != null && cachePlugin.cacheFile().exists()) {
                 Files.copy(cachePlugin.cacheFile().toPath(), new File(path, cachePlugin.cacheFile().getName()).toPath());
                 return true;
             }
@@ -35,19 +44,44 @@ public class CacheManager {
             cacheDir.delete();
             cacheDir.mkdirs();
         }
-        File file;
-        if (platform.equals("Spigot")) {
-            file = spigotRepo.download(plugin.id, version, 8, cacheDir);
-        } else {
-            file = hangarRepo.download(plugin.id, version, 8, cacheDir);
-        }
-        Files.copy(file.toPath(), new File(path, file.getName()).toPath());
-        cachePluginList.add(new CachePlugin(platform, plugin.id, version, file));
+        DownloadInfo downloadInfo = new DownloadInfo(plugin, platform, plugin.id, version, path, 8);
+        downloadQueue.add(downloadInfo);
         return false;
     }
 
     public static void load() throws FileNotFoundException {
         File file = new File(".plugifycraft/cache");
+        Thread downloadThread = new Thread(() -> {
+            while (true) {
+                if (downloadQueue.isEmpty()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {}
+                    continue;
+                }
+                DownloadInfo downloadInfo = downloadQueue.poll();
+                currentDownloadInfo = downloadInfo;
+                File cacheDir = new File(".plugifycraft/cache");
+                File f = null;
+                try {
+                    if (downloadInfo.platform().equals("Spigot")) {
+                        f = spigotRepo.download(downloadInfo.pluginId(), downloadInfo.version(), 8, cacheDir);
+                    } else {
+                        f = hangarRepo.download(downloadInfo.pluginId(), downloadInfo.version(), 8, cacheDir);
+                    }
+                    Files.copy(f.toPath(), new File(downloadInfo.path(), file.getName()).toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                cachePluginList.add(new CachePlugin(downloadInfo.platform(), downloadInfo.pluginId(), downloadInfo.version(), f));
+                completedQueue.add(downloadInfo);
+                if (completedQueue.size() > 10) {
+                    completedQueue.poll();
+                }
+                currentDownloadInfo = null;
+            }
+        });
+        downloadThread.start();
         if (!file.exists()) {
             file.mkdirs();
             return;

@@ -181,7 +181,7 @@ public class PluginPaneManager {
         return anchorPane;
     }
 
-    public void download() {
+    public void download() throws IOException {
         if (downloadPath.getText().isEmpty()) {
             label.setText("下载路径不能为空!");
             delayedLabel(label, Duration.ofSeconds(2));
@@ -192,23 +192,7 @@ public class PluginPaneManager {
             delayedLabel(label, Duration.ofSeconds(2));
             return;
         }
-        label.setText("下载中...");
-        label.setFont(Font.font("System", 12));
-        label.setLayoutX(870);
-        label.setLayoutY(22);
-        label.setVisible(true);
-        Thread thread = new Thread(() -> {
-            // TODO: cache
-            try {
-                CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()));
-                Platform.runLater(() -> label.setText("下载完成!"));
-            } catch (IOException e) {
-                e.printStackTrace();
-                Platform.runLater(() -> label.setText("下载失败, 请检查网络连接!"));
-                delayedLabel(label, Duration.ofSeconds(2));
-            }
-        });
-        thread.start();
+        CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()));
     }
     
     public void search(boolean searchSpigotMC, boolean searchHangar, String content, GridPane explorePane) {
