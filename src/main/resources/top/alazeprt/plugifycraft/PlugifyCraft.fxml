@@ -69,7 +69,7 @@
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <JFXButton layoutX="776.0" layoutY="9.0" onAction="#onSearch" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
+            <JFXButton layoutX="776.0" layoutY="11.0" onAction="#onSearch" style="-fx-border-color: #339af0; -fx-border-radius: 5px" text="点击搜索" />
             <JFXCheckBox fx:id="searchHangar" checkedColor="#4dabf7" layoutX="604.0" layoutY="15.0" text="Hangar (Paper)" />
             <JFXCheckBox fx:id="searchSpigotMC" checkedColor="#4dabf7" layoutX="501.0" layoutY="15.0" text="SpigotMC" />
             <Label layoutX="200.0" layoutY="14.0" text="插件搜索">
@@ -83,7 +83,7 @@
       <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false" />
       <AnchorPane fx:id="starMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
-            <JFXButton layoutX="776.0" layoutY="9.0" onAction="#onSearchInStar" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
+            <JFXButton layoutX="776.0" layoutY="11.0" onAction="#onSearchInStar" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="点击搜索" />
             <Label layoutX="200.0" layoutY="14.0" text="收藏夹搜索">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -129,11 +129,11 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label layoutX="14.0" layoutY="58.0" text="新建收藏夹: " />
-                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="54.0" prefWidth="150.0" promptText="收藏夹名称..." />
+                        <Label layoutX="14.0" layoutY="55.0" text="新建收藏夹: " />
+                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="51.0" prefWidth="150.0" promptText="收藏夹名称..." />
                         <JFXButton layoutX="272.0" layoutY="51.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
                         <Label layoutX="14.0" layoutY="95.0" text="删除收藏夹: " />
-                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="93.0" prefWidth="150.0" />
+                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="91.0" prefWidth="150.0" />
                         <JFXButton layoutX="272.0" layoutY="91.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
                      </children>
                   </AnchorPane>
@@ -153,14 +153,14 @@
             <Label fx:id="pluginRelease" layoutX="826.0" layoutY="275.0" text="发布于: " />
             <Label fx:id="pluginUpdate" layoutX="826.0" layoutY="302.0" text="更新于: " />
             <Label fx:id="pluginCategory" layoutX="826.0" layoutY="329.0" text="类别: " />
-            <WebView fx:id="pluginDesc" layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800" style="-fx-page-fill: #e7f5ff;" />
+            <WebView fx:id="pluginDesc" layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800" />
             <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="下载" />
             <JFXButton fx:id="starButton" layoutX="117.0" layoutY="463.0" onAction="#onPluginStar" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="收藏" />
             <Label layoutX="824.0" layoutY="427.0" text="下载至: " />
             <Label layoutX="826.0" layoutY="390.0" text="收藏至:" />
             <ChoiceBox fx:id="starsChoice" layoutX="873.0" layoutY="385.0" prefHeight="25.0" prefWidth="150.0" />
             <TextField fx:id="downloadPath" layoutX="826.0" layoutY="452.0" maxWidth="160.0" prefHeight="25.0" prefWidth="160.0" />
-            <Button layoutX="995.0" layoutY="452.0" mnemonicParsing="false" onAction="#onChooseDownloadPath" prefHeight="25.0" prefWidth="28.0" text="Button" />
+            <Button layoutX="995.0" layoutY="452.0" mnemonicParsing="false" onAction="#onChooseDownloadPath" prefHeight="25.0" prefWidth="28.0" style="-fx-background-color: #e7f5ff; -fx-border-color: #339af0; -fx-border-radius: 10px;" text="..." />
             <Label layoutX="824.0" layoutY="494.0" text="下载版本: " />
             <ChoiceBox fx:id="versionChoice" layoutX="884.0" layoutY="489.0" prefHeight="27.0" prefWidth="133.0" />
          </children></AnchorPane>
