@@ -19,6 +19,7 @@ public class CacheManager {
     protected static final Queue<DownloadInfo> downloadQueue = new ArrayDeque<>();
     protected static final Queue<DownloadInfo> completedQueue = new ArrayDeque<>();
     protected static DownloadInfo currentDownloadInfo;
+    private static Thread downloadThread;
 
     public static String getStatus(DownloadInfo downloadInfo) {
         if (downloadQueue.contains(downloadInfo)) return "等待中";
@@ -51,7 +52,7 @@ public class CacheManager {
 
     public static void load() throws FileNotFoundException {
         File file = new File(".plugifycraft/cache");
-        Thread downloadThread = new Thread(() -> {
+        downloadThread = new Thread(() -> {
             while (true) {
                 if (downloadQueue.isEmpty()) {
                     try {
@@ -111,6 +112,9 @@ public class CacheManager {
     }
 
     public static void save() throws IOException {
+        if (downloadThread != null && downloadThread.isAlive()) {
+            downloadThread.interrupt();
+        }
         File file = new File(".plugifycraft/cache");
         if (!file.exists()) {
             file.mkdirs();

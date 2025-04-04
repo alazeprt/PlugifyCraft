@@ -51,7 +51,7 @@ public class PluginPaneManager {
     public Label loadDataLabel;
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
-    public List<Thread> requestThreads = new ArrayList<>();
+    public static List<Thread> requestThreads = new ArrayList<>();
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
     public Map<String, Integer> versionMap = new HashMap<>();
@@ -298,4 +298,6 @@ public class PluginPaneManager {
             Platform.runLater(() -> label.setVisible(false));
         }).start();
     }
+
+
 }

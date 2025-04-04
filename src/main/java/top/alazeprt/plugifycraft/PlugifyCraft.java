@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import top.alazeprt.pclib.repository.HangarRepository;
 import top.alazeprt.pclib.repository.SpigotMCRepository;
 import top.alazeprt.plugifycraft.util.CacheManager;
+import top.alazeprt.plugifycraft.util.PluginPaneManager;
 import top.alazeprt.plugifycraft.util.StarManager;
 
 import java.io.IOException;
@@ -28,6 +29,8 @@ public class PlugifyCraft extends Application {
             try {
                 StarManager.save();
                 CacheManager.save();
+                PluginPaneManager.requestThreads.forEach(Thread::interrupt);
+                System.exit(0);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
