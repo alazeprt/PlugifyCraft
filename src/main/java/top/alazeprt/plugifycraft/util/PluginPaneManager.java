@@ -32,6 +32,7 @@ import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
 
 public class PluginPaneManager {
     public AnchorPane pluginViewPane;
+    public AnchorPane loadDataPane;
 
     public ImageView pluginIcon;
     public Label pluginTitle;
@@ -47,6 +48,7 @@ public class PluginPaneManager {
     public ChoiceBox<String> versionChoice;
 
     public Label label;
+    public Label loadDataLabel;
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public List<Thread> requestThreads = new ArrayList<>();
@@ -54,7 +56,7 @@ public class PluginPaneManager {
     public Plugin nowViewingPlugin;
     public Map<String, Integer> versionMap = new HashMap<>();
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -69,6 +71,8 @@ public class PluginPaneManager {
         this.starButton = starButton;
         this.label = label;
         this.versionChoice = versionChoice;
+        this.loadDataLabel = loadDataLabel;
+        this.loadDataPane = loadDataPane;
     }
 
     public AnchorPane getPluginPane(Plugin plugin) {
@@ -116,13 +120,10 @@ public class PluginPaneManager {
         anchorPane.getChildren().add(update);
         anchorPane.setOnMouseClicked((event) -> {
             nowViewingPlugin = plugin;
-            requestThreads.forEach(Thread::interrupt);
             mainPaneManager.handleMainPane(pluginViewPane);
-            label.setText("正在拉取插件详细信息...");
-            label.setFont(Font.font("System", 12));
-            label.setLayoutX(870);
-            label.setLayoutY(22);
-            label.setVisible(true);
+            loadDataPane.setVisible(true);
+            loadDataPane.setLayoutY(202.5);
+            loadDataLabel.setText("正在拉取插件详细信息...");
             pluginTitle.setText(plugin.name);
             pluginAuthor.setText("作者: " + plugin.author.name);
             pluginCategory.setText("类别: " + plugin.category);
@@ -148,6 +149,8 @@ public class PluginPaneManager {
                 try {
                     if (plugin1 instanceof SpigotPlugin) {
                         Plugin detail = spigotRepo.getPlugin(plugin1.id);
+                        Map<String, Integer> versions = spigotRepo.getVersions(plugin1.id);
+                        versionMap.putAll(versions);
                         Platform.runLater(() -> {
                             if (detail != null) {
                                 pluginDesc.getEngine().loadContent("<html><body>" + detail.description + "</body></html>");
@@ -155,8 +158,6 @@ public class PluginPaneManager {
                                 pluginAuthor.setText("作者: " + detail.author.name);
                             }
                         });
-                        Map<String, Integer> versions = spigotRepo.getVersions(plugin1.id);
-                        versionMap.putAll(versions);
                     } else {
                         Map<String, Integer> versions = hangarRepo.getVersions(plugin1.id);
                         versionMap.putAll(versions);
@@ -166,15 +167,13 @@ public class PluginPaneManager {
                         versionMap.keySet().forEach(version -> {
                             versionChoice.getItems().add(version);
                         });
-                        label.setText("拉取完成!");
+                        loadDataPane.setVisible(false);
                     });
                     delayedLabel(label, Duration.ofSeconds(2));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
-                } catch (CancellationException ignored) {
-                    Platform.runLater(() -> label.setVisible(false));
-                }
+                    Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
+                } catch (CancellationException ignored) {}
             });
             thread.start();
             requestThreads.add(thread);
@@ -214,17 +213,11 @@ public class PluginPaneManager {
     
     public void search(boolean searchSpigotMC, boolean searchHangar, String content, GridPane explorePane) {
         if (!searchSpigotMC && !searchHangar) {
-            label.setText("你未选择任何数据来源!");
-            label.setFont(Font.font("System", 12));
-            label.setLayoutX(870);
-            label.setLayoutY(22);
-            delayedLabel(label, Duration.ofSeconds(2));
+            loadDataLabel.setText("你未选择任何数据来源!");
         } else if (searchSpigotMC && !searchHangar) {
-            label.setText("搜索中...");
-            label.setFont(Font.font("System", 12));
-            label.setLayoutX(870);
-            label.setLayoutY(22);
-            label.setVisible(true);
+            loadDataLabel.setText("搜索数据中...");
+            loadDataPane.setVisible(true);
+            loadDataPane.setLayoutY(247.5);
             Thread thread = new Thread(() -> {
                 List<Plugin> list;
                 try {
@@ -235,19 +228,18 @@ public class PluginPaneManager {
                         list = spigotRepo.fastSearch(content, 15);
                     }
                     handlePaneList(explorePane, list);
+                    Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
+                    Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });
             thread.start();
             requestThreads.add(thread);
         } else if (!searchSpigotMC && searchHangar) {
-            label.setText("搜索中...");
-            label.setFont(Font.font("System", 12));
-            label.setLayoutX(870);
-            label.setLayoutY(22);
-            label.setVisible(true);
+            loadDataLabel.setText("搜索数据中...");
+            loadDataPane.setVisible(true);
+            loadDataPane.setLayoutY(247.5);
             Thread thread = new Thread(() -> {
                 List<Plugin> list;
                 try {
@@ -258,32 +250,29 @@ public class PluginPaneManager {
                         list = hangarRepo.search(content, 15);
                     }
                     handlePaneList(explorePane, list);
+                    Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
+                    Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });
             thread.start();
             requestThreads.add(thread);
         } else {
-            label.setText("选择多个数据源可能会出现重复的插件!");
-            label.setFont(Font.font("System", 12));
-            label.setLayoutX(820);
-            label.setLayoutY(22);
-            delayedLabel(label, Duration.ofSeconds(2));
+            loadDataLabel.setText("搜索数据中 (选择多个数据源可能会有重复插件)...");
+            loadDataPane.setVisible(true);
+            loadDataPane.setLayoutY(247.5);
             Thread thread = new Thread(() -> {
-                Platform.runLater(() -> {
-                    label.setText("搜索中...");
-                });
                 List<Plugin> list;
                 try {
                     List<Plugin> spigotList = spigotRepo.fastSearch(content, 9);
                     list = hangarRepo.search(content, 6);
                     list.addAll(spigotList);
                     handlePaneList(explorePane, list);
+                    Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
+                    Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });
             thread.start();

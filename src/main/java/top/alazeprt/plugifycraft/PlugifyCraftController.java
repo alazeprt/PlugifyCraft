@@ -66,17 +66,23 @@ public class PlugifyCraftController {
     // settings
     public TextField createStarField;
     public ChoiceBox<String> deleteStarChoiceBox;
+
+    // load data
+    public AnchorPane loadDataPane;
+    public Label loadDataLabel;
     
     public PluginPaneManager pluginPaneManager;
     public StarManager starManager;
 
     public void initialize() throws IOException, ParseException {
-        label = new Label("从 SpigotMC 获取数据中...");
+        label = new Label("");
         label.setFont(Font.font("System", 12));
         label.setTextFill(Color.WHITE);
         label.setLayoutX(870);
         label.setLayoutY(22);
-        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice);
+        loadDataLabel.setText("从 SpigotMC 获取数据中...");
+        loadDataPane.setVisible(true);
+        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         StarManager.load();
         CacheManager.load();
@@ -112,11 +118,11 @@ public class PlugifyCraftController {
                     explorePane.add(pluginPaneManager.getPluginPane(finalList.get(12)), 0, 4);
                     explorePane.add(pluginPaneManager.getPluginPane(finalList.get(13)), 1, 4);
                     explorePane.add(pluginPaneManager.getPluginPane(finalList.get(14)), 2, 4);
-                    label.setVisible(false);
+                    loadDataPane.setVisible(false);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
+                Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
             }
         }).start();
         searchSpigotMC.setSelected(true);
@@ -134,33 +140,40 @@ public class PlugifyCraftController {
     }
 
     public void onSearch() {
+        pluginPaneManager.requestThreads.forEach(Thread::interrupt);
+        explorePane.getChildren().clear();
         pluginPaneManager.search(searchSpigotMC.isSelected(), searchHangar.isSelected(), searchField.getText(), explorePane);
     }
 
     public void onExplorePane() {
         pluginPaneManager.nowViewingPlugin = null;
-        pluginPaneManager.requestThreads.forEach(Thread::interrupt);
         pluginPaneManager.mainPaneManager.handleMainPane(exploreMain);
+        if (explorePane.getChildren().isEmpty()) {
+            loadDataPane.setVisible(true);
+            loadDataPane.setLayoutY(247.5);
+        } else {
+            loadDataPane.setVisible(false);
+        }
     }
 
     public void onManagePane() {
         pluginPaneManager.nowViewingPlugin = null;
-        pluginPaneManager.requestThreads.forEach(Thread::interrupt);
         pluginPaneManager.mainPaneManager.handleMainPane(manageMain);
+        loadDataPane.setVisible(false);
     }
 
     public void onStarPane() {
         pluginPaneManager.nowViewingPlugin = null;
-        pluginPaneManager.requestThreads.forEach(Thread::interrupt);
         pluginPaneManager.mainPaneManager.handleMainPane(starMain);
         starPane.getChildren().clear();
         starManager.addAllDataToPane();
+        loadDataPane.setVisible(false);
     }
 
     public void onSettingsPane() {
         pluginPaneManager.nowViewingPlugin = null;
-        pluginPaneManager.requestThreads.forEach(Thread::interrupt);
         pluginPaneManager.mainPaneManager.handleMainPane(settingsMain);
+        loadDataPane.setVisible(false);
     }
 
     public void onPluginDownload() {
