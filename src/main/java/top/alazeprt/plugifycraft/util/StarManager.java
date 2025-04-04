@@ -44,6 +44,13 @@ public class StarManager {
         this.pluginPaneManager = pluginPaneManager;
     }
 
+    public List<Plugin> getAllData() {
+        if (starFolders.getValue() == null || starFolders.getValue().isBlank()) {
+            return new ArrayList<>();
+        }
+        return StarManager.getFolder(starFolders.getValue());
+    }
+
     public void addAllDataToPane() {
         if (starFolders.getValue() == null || starFolders.getValue().isBlank()) {
             return;

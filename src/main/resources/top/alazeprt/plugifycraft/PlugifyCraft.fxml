@@ -140,6 +140,7 @@
                   </AnchorPane>
                </content>
             </ScrollPane>
+            <JFXButton layoutX="870.0" layoutY="11.0" onAction="#onPluginDownloadAll" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="批量下载" />
          </children></AnchorPane>
       <AnchorPane fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>

@@ -8,6 +8,7 @@ import top.alazeprt.pclib.util.SpigotPlugin;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
@@ -20,6 +21,7 @@ public class CacheManager {
     protected static final Queue<DownloadInfo> completedQueue = new ArrayDeque<>();
     protected static DownloadInfo currentDownloadInfo;
     private static Thread downloadThread;
+    private static long lastDownloadTime = -1;
 
     public static String getStatus(DownloadInfo downloadInfo) {
         if (downloadQueue.contains(downloadInfo)) return "等待中";
@@ -33,7 +35,7 @@ public class CacheManager {
         for (CachePlugin cachePlugin : cachePluginList) {
             if (cachePlugin.id() == plugin.id && cachePlugin.platform().equals(platform) &&
                     cachePlugin.version() == version && cachePlugin.cacheFile() != null && cachePlugin.cacheFile().exists()) {
-                Files.copy(cachePlugin.cacheFile().toPath(), new File(path, cachePlugin.cacheFile().getName()).toPath());
+                Files.copy(cachePlugin.cacheFile().toPath(), new File(path, cachePlugin.cacheFile().getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 return true;
             }
         }
@@ -59,22 +61,29 @@ public class CacheManager {
                         Thread.sleep(1000);
                     } catch (InterruptedException ignored) {}
                     continue;
+                } else if (lastDownloadTime != -1 && System.currentTimeMillis() - lastDownloadTime < 1000 * 20) {
+                    try {
+                        Thread.sleep(1000 * 20 - (System.currentTimeMillis() - lastDownloadTime));
+                    } catch (InterruptedException ignored) {}
                 }
                 DownloadInfo downloadInfo = downloadQueue.poll();
                 currentDownloadInfo = downloadInfo;
                 File cacheDir = new File(".plugifycraft/cache");
                 File f = null;
+                boolean success = false;
                 try {
                     if (downloadInfo.platform().equals("Spigot")) {
                         f = spigotRepo.download(downloadInfo.pluginId(), downloadInfo.version(), 8, cacheDir);
                     } else {
                         f = hangarRepo.download(downloadInfo.pluginId(), downloadInfo.version(), 8, cacheDir);
                     }
-                    Files.copy(f.toPath(), new File(downloadInfo.path(), file.getName()).toPath());
+                    lastDownloadTime = System.currentTimeMillis();
+                    Files.copy(f.toPath(), new File(downloadInfo.path(), f.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    success = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                cachePluginList.add(new CachePlugin(downloadInfo.platform(), downloadInfo.pluginId(), downloadInfo.version(), f));
+                if (success) cachePluginList.add(new CachePlugin(downloadInfo.platform(), downloadInfo.pluginId(), downloadInfo.version(), f));
                 completedQueue.add(downloadInfo);
                 if (completedQueue.size() > 10) {
                     completedQueue.poll();

@@ -54,7 +54,7 @@ public class PluginPaneManager {
     public static List<Thread> requestThreads = new ArrayList<>();
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
-    public Map<String, Integer> versionMap = new HashMap<>();
+    public LinkedHashMap<String, Integer> versionMap = new LinkedHashMap<>();
     
     public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane) {
         this.pluginViewPane = pluginViewPane;

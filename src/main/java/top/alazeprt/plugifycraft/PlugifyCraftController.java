@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
+import top.alazeprt.pclib.util.SpigotPlugin;
 import top.alazeprt.plugifycraft.util.CacheManager;
 import top.alazeprt.plugifycraft.util.ManageManager;
 import top.alazeprt.plugifycraft.util.PluginPaneManager;
@@ -26,6 +27,7 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.util.*;
 
+import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
 
 public class PlugifyCraftController {
@@ -266,5 +268,32 @@ public class PlugifyCraftController {
 
     public void onDownloadsPane() {
         manageManager.reload();
+    }
+
+    public void onPluginDownloadAll() throws IOException {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("选择下载路径");
+        File file = directoryChooser.showDialog(null);
+        if (file != null) {
+            List<Plugin> plugins = starManager.getAllData();
+            for (Plugin plugin : plugins) {
+                int version = -1;
+                if (plugin instanceof SpigotPlugin) {
+                    Map<String, Integer> versions = spigotRepo.getVersions(plugin.id);
+                    for (int s : versions.values()) {
+                        version = s;
+                        break;
+                    }
+                } else {
+                    Map<String, Integer> versions = hangarRepo.getVersions(plugin.id);
+                    for (int s : versions.values()) {
+                        version = s;
+                        break;
+                    }
+                }
+                if (version == -1) continue;
+                CacheManager.download(plugin, version, file);
+            }
+        }
     }
 }
