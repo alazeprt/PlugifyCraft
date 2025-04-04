@@ -228,7 +228,12 @@ public class PluginPaneManager {
             Thread thread = new Thread(() -> {
                 List<Plugin> list;
                 try {
-                    list = spigotRepo.fastSearch(content, 15);
+                    if (content.isBlank()) {
+                        int page = Math.abs(new Random().nextInt()%200)+1;
+                        list = spigotRepo.fastGetPlugins(15, page);
+                    } else {
+                        list = spigotRepo.fastSearch(content, 15);
+                    }
                     handlePaneList(explorePane, list);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -246,7 +251,12 @@ public class PluginPaneManager {
             Thread thread = new Thread(() -> {
                 List<Plugin> list;
                 try {
-                    list = hangarRepo.search(content, 15);
+                    if (content.isBlank()) {
+                        int page = Math.abs(new Random().nextInt()%600);
+                        list = hangarRepo.getPlugins(15, page);
+                    } else {
+                        list = hangarRepo.search(content, 15);
+                    }
                     handlePaneList(explorePane, list);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -286,7 +296,7 @@ public class PluginPaneManager {
         Platform.runLater(() -> {
             explorePane.getChildren().clear();
             pluginPanes.clear();
-            int maxRow = 4;
+            int maxRow = 5;
             int maxCol = 3;
             int row = 0;
             int col = 0;
