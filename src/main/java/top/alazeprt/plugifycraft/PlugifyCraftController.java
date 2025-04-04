@@ -55,6 +55,7 @@ public class PlugifyCraftController {
     public ChoiceBox<String> starsChoice;
     public TextField downloadPath;
     public JFXButton starButton;
+    public ChoiceBox<String> versionChoice;
 
     // stars
     public TextField starSearchField;
@@ -69,8 +70,12 @@ public class PlugifyCraftController {
     public StarManager starManager;
 
     public void initialize() throws IOException, ParseException {
-        label = new Label();
-        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label);
+        label = new Label("从 SpigotMC 获取数据中...");
+        label.setFont(Font.font("System", 12));
+        label.setTextFill(Color.WHITE);
+        label.setLayoutX(870);
+        label.setLayoutY(22);
+        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         StarManager.load();
         starsChoice.getItems().addAll(StarManager.starMap.keySet());
@@ -80,11 +85,6 @@ public class PlugifyCraftController {
         this.starFolders.setValue("默认收藏夹");
         deleteStarChoiceBox.setValue("默认收藏夹");
         pluginPaneManager.mainPaneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
-        label = new Label("从 SpigotMC 获取数据中...");
-        label.setFont(Font.font("System", 12));
-        label.setTextFill(Color.WHITE);
-        label.setLayoutX(870);
-        label.setLayoutY(22);
         topPane.getChildren().add(label);
         new Thread(() -> {
             List<Plugin> list;
@@ -161,7 +161,9 @@ public class PlugifyCraftController {
         pluginPaneManager.mainPaneManager.handleMainPane(settingsMain);
     }
 
-    public void onPluginDownload() {}
+    public void onPluginDownload() {
+        pluginPaneManager.download();
+    }
 
     public void onPluginStar() {
         if (pluginPaneManager.nowViewingPlugin == null) return;
@@ -200,14 +202,12 @@ public class PlugifyCraftController {
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
             label.setLayoutY(22);
-            label.setTextFill(Color.RED);
             pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
         } else if (StarManager.contains(createStarField.getText())) {
             label.setText("收藏夹名已存在!");
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
             label.setLayoutY(22);
-            label.setTextFill(Color.RED);
             pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
         } else {
             StarManager.createFolder(createStarField.getText());
@@ -233,7 +233,6 @@ public class PlugifyCraftController {
             label.setFont(Font.font("System", 12));
             label.setLayoutX(870);
             label.setLayoutY(22);
-            label.setTextFill(Color.RED);
             pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
         } else {
             StarManager.starMap.remove(deleteStarChoiceBox.getValue());

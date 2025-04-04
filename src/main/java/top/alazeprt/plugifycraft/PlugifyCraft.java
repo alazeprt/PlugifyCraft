@@ -30,6 +30,7 @@ public class PlugifyCraft extends Application {
                 throw new RuntimeException(e);
             }
         });
+        stage.setResizable(false);
     }
 
     public static void main(String[] args) {

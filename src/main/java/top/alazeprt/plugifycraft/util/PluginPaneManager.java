@@ -15,7 +15,9 @@ import javafx.scene.web.WebView;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 
+import java.beans.Introspector;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,6 +44,7 @@ public class PluginPaneManager {
     public ChoiceBox<String> starsChoice;
     public TextField downloadPath;
     public JFXButton starButton;
+    public ChoiceBox<String> versionChoice;
 
     public Label label;
 
@@ -49,8 +52,9 @@ public class PluginPaneManager {
     public List<Thread> requestThreads = new ArrayList<>();
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
+    public Map<String, Integer> versionMap = new HashMap<>();
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -64,6 +68,7 @@ public class PluginPaneManager {
         this.downloadPath = downloadPath;
         this.starButton = starButton;
         this.label = label;
+        this.versionChoice = versionChoice;
     }
 
     public AnchorPane getPluginPane(Plugin plugin) {
@@ -137,6 +142,7 @@ public class PluginPaneManager {
                 starButton.setStyle("-fx-border-color: #ff6b6b; -fx-border-radius: 10px;");
             }
             pluginIcon.setImage(new Image(new ByteArrayInputStream(Base64.getDecoder().decode(plugin.image.getBytes(StandardCharsets.UTF_8)))));
+            versionMap.clear();
             Thread thread = new Thread(() -> {
                 Plugin plugin1 = pluginPanes.get(anchorPane);
                 try {
@@ -149,14 +155,24 @@ public class PluginPaneManager {
                                 pluginAuthor.setText("作者: " + detail.author.name);
                             }
                         });
+                        Map<String, Integer> versions = spigotRepo.getVersions(plugin1.id);
+                        versionMap.putAll(versions);
+                    } else {
+                        Map<String, Integer> versions = hangarRepo.getVersions(plugin1.id);
+                        versionMap.putAll(versions);
                     }
-                    Platform.runLater(() -> label.setText("拉取完成!"));
-                    Thread.sleep(2000);
-                    Platform.runLater(() -> label.setVisible(false));
+                    Platform.runLater(() -> {
+                        versionChoice.getItems().clear();
+                        versionMap.keySet().forEach(version -> {
+                            versionChoice.getItems().add(version);
+                        });
+                        label.setText("拉取完成!");
+                    });
+                    delayedLabel(label, Duration.ofSeconds(2));
                 } catch (IOException e) {
                     e.printStackTrace();
                     Platform.runLater(() -> label.setText("获取数据失败, 请检查网络连接"));
-                } catch (InterruptedException | CancellationException ignored) {
+                } catch (CancellationException ignored) {
                     Platform.runLater(() -> label.setVisible(false));
                 }
             });
@@ -164,6 +180,39 @@ public class PluginPaneManager {
             requestThreads.add(thread);
         });
         return anchorPane;
+    }
+
+    public void download() {
+        if (downloadPath.getText().isEmpty()) {
+            label.setText("下载路径不能为空!");
+            delayedLabel(label, Duration.ofSeconds(2));
+            return;
+        }
+        if (versionChoice.getItems().isEmpty()) {
+            label.setText("请选择版本!");
+            delayedLabel(label, Duration.ofSeconds(2));
+            return;
+        }
+        label.setText("下载中...");
+        label.setFont(Font.font("System", 12));
+        label.setLayoutX(870);
+        label.setLayoutY(22);
+        label.setVisible(true);
+        Thread thread = new Thread(() -> {
+            try {
+                if (nowViewingPlugin instanceof SpigotPlugin) {
+                    spigotRepo.download(nowViewingPlugin.id, versionMap.get(versionChoice.getValue()), 4, new File(downloadPath.getText()));
+                } else {
+                    hangarRepo.download(nowViewingPlugin.id, versionMap.get(versionChoice.getValue()), 4, new File(downloadPath.getText()));
+                }
+                Platform.runLater(() -> label.setText("下载完成!"));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Platform.runLater(() -> label.setText("下载失败, 请检查网络连接!"));
+                delayedLabel(label, Duration.ofSeconds(2));
+            }
+        });
+        thread.start();
     }
     
     public void search(boolean searchSpigotMC, boolean searchHangar, String content, GridPane explorePane) {

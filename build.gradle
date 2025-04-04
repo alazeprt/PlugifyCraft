@@ -37,7 +37,7 @@ javafx {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.12.1'
-    implementation 'com.github.alazeprt:PlugifyCraftLib:1.6'
+    implementation 'com.github.alazeprt:PlugifyCraftLib:1.10'
     implementation 'com.jfoenix:jfoenix:9.0.10'
 }
 

@@ -45,6 +45,9 @@ public class StarManager {
     }
 
     public void addAllDataToPane() {
+        if (starFolders.getValue() == null || starFolders.getValue().isBlank()) {
+            return;
+        }
         List<Plugin> stars = StarManager.getFolder(starFolders.getValue());
         int maxCol = 3;
         int maxRow = stars.size() % maxCol == 0 ? stars.size() / maxCol : stars.size() / maxCol + 1;

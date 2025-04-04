@@ -161,6 +161,8 @@
             <ChoiceBox fx:id="starsChoice" layoutX="873.0" layoutY="385.0" prefHeight="25.0" prefWidth="150.0" />
             <TextField fx:id="downloadPath" layoutX="826.0" layoutY="452.0" maxWidth="160.0" prefHeight="25.0" prefWidth="160.0" />
             <Button layoutX="995.0" layoutY="452.0" mnemonicParsing="false" onAction="#onChooseDownloadPath" prefHeight="25.0" prefWidth="28.0" text="Button" />
+            <Label layoutX="824.0" layoutY="494.0" text="下载版本: " />
+            <ChoiceBox fx:id="versionChoice" layoutX="884.0" layoutY="489.0" prefHeight="27.0" prefWidth="133.0" />
          </children></AnchorPane>
    </children>
 </AnchorPane>
