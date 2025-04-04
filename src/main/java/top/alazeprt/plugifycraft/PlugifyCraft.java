@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import top.alazeprt.pclib.repository.HangarRepository;
 import top.alazeprt.pclib.repository.SpigotMCRepository;
+import top.alazeprt.plugifycraft.util.CacheManager;
 import top.alazeprt.plugifycraft.util.StarManager;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class PlugifyCraft extends Application {
         stage.setOnCloseRequest(event -> {
             try {
                 StarManager.save();
+                CacheManager.save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

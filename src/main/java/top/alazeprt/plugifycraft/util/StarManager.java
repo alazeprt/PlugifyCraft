@@ -229,7 +229,6 @@ public class StarManager {
                     }
                     starMap.put(entry.getKey(), plugins);
                 }
-                // TODO: 在此处加载收藏夹 (添加到 starPane)
             });
             thread.start();
         } else {

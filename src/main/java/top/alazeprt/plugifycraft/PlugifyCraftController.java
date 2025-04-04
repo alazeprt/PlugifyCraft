@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
+import top.alazeprt.plugifycraft.util.CacheManager;
 import top.alazeprt.plugifycraft.util.PluginPaneManager;
 import top.alazeprt.plugifycraft.util.StarManager;
 
@@ -78,6 +79,7 @@ public class PlugifyCraftController {
         pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         StarManager.load();
+        CacheManager.load();
         starsChoice.getItems().addAll(StarManager.starMap.keySet());
         this.starFolders.getItems().addAll(StarManager.starMap.keySet());
         deleteStarChoiceBox.getItems().addAll(StarManager.starMap.keySet());

@@ -199,12 +199,9 @@ public class PluginPaneManager {
         label.setLayoutY(22);
         label.setVisible(true);
         Thread thread = new Thread(() -> {
+            // TODO: cache
             try {
-                if (nowViewingPlugin instanceof SpigotPlugin) {
-                    spigotRepo.download(nowViewingPlugin.id, versionMap.get(versionChoice.getValue()), 4, new File(downloadPath.getText()));
-                } else {
-                    hangarRepo.download(nowViewingPlugin.id, versionMap.get(versionChoice.getValue()), 4, new File(downloadPath.getText()));
-                }
+                CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()));
                 Platform.runLater(() -> label.setText("下载完成!"));
             } catch (IOException e) {
                 e.printStackTrace();
