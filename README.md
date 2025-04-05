@@ -26,7 +26,7 @@
 ## 🤝 参与贡献
 我们欢迎任何形式的贡献：
 - 在 [Issues](https://github.com/alazeprt/PlugifyCraft/issues) 中向开发者反馈问题
-- 向项目发送 [Pull Requests]((https://github.com/alazeprt/PlugifyCraft/prs)
+- 向项目发送 [Pull Requests](https://github.com/alazeprt/PlugifyCraft/prs)
 - 进入 [官方QQ交流群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=TBTp1UDTIgX4rhtE2ayN6eAju0ywEN7i&authKey=qXOEW7C89CogD6f%2BcXVJDQ5eFubQUQF3Deg3XIfv3vYHHAjqgbotZui1ZDLxTp4i&noverify=0&group_code=669737143)
 
 ## 📜 开源协议
