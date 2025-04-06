@@ -20,7 +20,7 @@ public class CacheManager {
     protected static final Queue<DownloadInfo> downloadQueue = new ArrayDeque<>();
     protected static final Queue<DownloadInfo> completedQueue = new ArrayDeque<>();
     protected static DownloadInfo currentDownloadInfo;
-    private static Thread downloadThread;
+    protected static Thread downloadThread;
     private static long lastDownloadTime = -1;
 
     public static String getStatus(DownloadInfo downloadInfo) {
@@ -32,10 +32,12 @@ public class CacheManager {
 
     public static boolean download(Plugin plugin, int version, File path, int threadCount) throws IOException {
         String platform = plugin instanceof SpigotPlugin ? "Spigot" : "Hangar";
+        DownloadInfo downloadInfo = new DownloadInfo(plugin, platform, plugin.id, version, path, threadCount);
         for (CachePlugin cachePlugin : cachePluginList) {
             if (cachePlugin.id() == plugin.id && cachePlugin.platform().equals(platform) &&
                     cachePlugin.version() == version && cachePlugin.cacheFile() != null && cachePlugin.cacheFile().exists()) {
                 Files.copy(cachePlugin.cacheFile().toPath(), new File(path, cachePlugin.cacheFile().getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                completedQueue.add(downloadInfo);
                 return true;
             }
         }
@@ -47,7 +49,6 @@ public class CacheManager {
             cacheDir.delete();
             cacheDir.mkdirs();
         }
-        DownloadInfo downloadInfo = new DownloadInfo(plugin, platform, plugin.id, version, path, threadCount);
         downloadQueue.add(downloadInfo);
         return false;
     }

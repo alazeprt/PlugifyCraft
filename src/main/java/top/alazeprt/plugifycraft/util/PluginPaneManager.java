@@ -196,6 +196,11 @@ public class PluginPaneManager {
             delayedLabel(label, Duration.ofSeconds(2));
             return;
         }
+        if (!versionMap.containsKey(versionChoice.getValue())) {
+            label.setText("该版本不存在!");
+            delayedLabel(label, Duration.ofSeconds(2));
+            return;
+        }
         CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()), (int) threadCount.getValue());
     }
     

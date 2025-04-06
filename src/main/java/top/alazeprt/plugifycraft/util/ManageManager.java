@@ -1,9 +1,15 @@
 package top.alazeprt.plugifycraft.util;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+
+import java.util.Objects;
+
+import static top.alazeprt.plugifycraft.util.CacheManager.currentDownloadInfo;
+import static top.alazeprt.plugifycraft.util.CacheManager.downloadThread;
 
 public class ManageManager {
     public GridPane downloadsPane;
@@ -15,7 +21,7 @@ public class ManageManager {
     public void reload() {
         downloadsPane.getChildren().clear();
         int newSize = CacheManager.completedQueue.size() + CacheManager.downloadQueue.size() +
-                (CacheManager.currentDownloadInfo == null ? 0 : 1);
+                (currentDownloadInfo == null ? 0 : 1);
         if (newSize > downloadsPane.getRowCount()) {
             for (int i = 1; i <= newSize - downloadsPane.getRowCount(); i++) addLine();
         }
@@ -26,8 +32,8 @@ public class ManageManager {
         for (DownloadInfo downloadInfo : CacheManager.downloadQueue) {
             downloadsPane.add(getDownloadTaskPane(downloadInfo), 0, downloadsPane.getChildren().size());
         }
-        if (CacheManager.currentDownloadInfo != null) {
-            downloadsPane.add(getDownloadTaskPane(CacheManager.currentDownloadInfo), 0, downloadsPane.getChildren().size());
+        if (currentDownloadInfo != null) {
+            downloadsPane.add(getDownloadTaskPane(currentDownloadInfo), 0, downloadsPane.getChildren().size());
         }
     }
 
@@ -46,7 +52,23 @@ public class ManageManager {
         status.setLayoutX(809);
         status.setLayoutY(33);
         status.setFont(Font.font("System Regular", 14));
+        JFXButton cancelBtn = new JFXButton("取消");
+        cancelBtn.setLayoutX(730);
+        cancelBtn.setLayoutY(54);
+        cancelBtn.setPrefWidth(50);
+        cancelBtn.setPrefHeight(20);
+        cancelBtn.setStyle("-fx-border-color: #ff6b6b; -fx-border-radius: 10px;");
+        cancelBtn.setOnAction(e -> {
+            if (Objects.equals(currentDownloadInfo, downloadInfo)) {
+                CacheManager.currentDownloadInfo = null;
+                downloadThread.interrupt();
+            } else {
+                CacheManager.downloadQueue.remove(downloadInfo);
+            }
+            reload();
+        });
         anchorPane.getChildren().addAll(name, info, status);
+        if (!status.getText().equals("已完成")) anchorPane.getChildren().add(cancelBtn);
         return anchorPane;
     }
 
