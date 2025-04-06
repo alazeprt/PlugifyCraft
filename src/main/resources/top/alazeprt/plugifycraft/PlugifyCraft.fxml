@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.web.WebView?>
-
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import one.jpro.platform.mdfx.MarkdownView?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" stylesheets="@scroll.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
    <children>
       <AnchorPane fx:id="topPane" prefHeight="60.0" prefWidth="1040.0" style="-fx-background-color: #228be6;">
@@ -194,7 +184,11 @@
             <Label fx:id="pluginRelease" layoutX="826.0" layoutY="275.0" text="发布于: " />
             <Label fx:id="pluginUpdate" layoutX="826.0" layoutY="302.0" text="更新于: " />
             <Label fx:id="pluginCategory" layoutX="826.0" layoutY="329.0" text="类别: " />
-            <WebView fx:id="pluginDesc" layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800" />
+            <ScrollPane layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800">
+               <AnchorPane style="-fx-background-color: #e7f5ff;">
+                  <MarkdownView style="-fx-background-color: #e7f5ff;" fx:id="pluginDesc"/>
+               </AnchorPane>
+            </ScrollPane>
             <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="下载" />
             <JFXButton fx:id="starButton" layoutX="117.0" layoutY="463.0" onAction="#onPluginStar" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="收藏" />
             <Label layoutX="824.0" layoutY="427.0" text="下载至: " />

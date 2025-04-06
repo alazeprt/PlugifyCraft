@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
+import one.jpro.platform.mdfx.MarkdownView;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 import top.alazeprt.plugifycraft.util.*;
@@ -52,7 +53,7 @@ public class PlugifyCraftController {
     public ImageView pluginIcon;
     public Label pluginTitle;
     public Label pluginAuthor;
-    public WebView pluginDesc;
+    public MarkdownView pluginDesc;
     public Label pluginDownloads;
     public Label pluginUpdate;
     public Label pluginRelease;

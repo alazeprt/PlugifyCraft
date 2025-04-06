@@ -6,8 +6,20 @@
     -fx-background-color: #e7f5ff;
 }
 
-.scroll-pane > .scroll-bar:horizontal {
+.scroll-pane > .scroll-bar:horizontal > .increment-button {
     -fx-opacity: 0;
+}
+
+.scroll-pane > .scroll-bar:horizontal > .decrement-button {
+    -fx-opacity: 0;
+}
+
+.scroll-pane > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: #E7F5FF;
+}
+
+.scroll-pane > .scroll-bar:horizontal > .thumb {
+    -fx-background-color: #a5d8ff;
 }
 
 .scroll-pane > .scroll-bar:vertical > .increment-button {
@@ -24,26 +36,6 @@
 
 .scroll-pane > .scroll-bar:vertical > .thumb {
     -fx-background-color: #a5d8ff;
-}
-
-.web-view > .scroll-bar:vertical > .increment-button {
-    -fx-opacity: 0;
-}
-
-.web-view > .scroll-bar:vertical > .decrement-button {
-    -fx-opacity: 0;
-}
-
-.web-view > .scroll-bar:vertical > .track-background {
-    -fx-background-color: #d0ebff;
-}
-
-.web-view > .scroll-bar:vertical > .thumb {
-    -fx-background-color: #a5d8ff;
-}
-
-.web-view {
-    -fx-page-fill: #e7f5ff;
 }
 
 .choice-box {

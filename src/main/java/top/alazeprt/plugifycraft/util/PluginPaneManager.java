@@ -1,6 +1,10 @@
 package top.alazeprt.plugifycraft.util;
 
 import com.jfoenix.controls.JFXButton;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -12,11 +16,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.web.WebView;
+import one.jpro.platform.mdfx.MarkdownView;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 
-import java.beans.Introspector;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +41,7 @@ public class PluginPaneManager {
     public ImageView pluginIcon;
     public Label pluginTitle;
     public Label pluginAuthor;
-    public WebView pluginDesc;
+    public MarkdownView pluginDesc;
     public Label pluginDownloads;
     public Label pluginUpdate;
     public Label pluginRelease;
@@ -59,7 +62,7 @@ public class PluginPaneManager {
     public Plugin nowViewingPlugin;
     public LinkedHashMap<String, Integer> versionMap = new LinkedHashMap<>();
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -132,9 +135,16 @@ public class PluginPaneManager {
             pluginAuthor.setText("作者: " + plugin.author.name);
             pluginCategory.setText("类别: " + plugin.category);
             if (plugin instanceof SpigotPlugin) {
-                pluginDesc.getEngine().loadContent("<html><body>" + plugin.description + "</body></html>");
+                String html = "<html><body>" + plugin.description + "</body></html>";
+                MutableDataSet options = new MutableDataSet();
+                options.set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
+                StringBuilder content = new StringBuilder();
+                for (String line : FlexmarkHtmlConverter.builder(options).build().convert(html).split("\n")) {
+                    if (!line.contains("IMG\\]")) content.append(line + "\n");
+                }
+                pluginDesc.setMdString(content.toString());
             } else {
-                pluginDesc.getEngine().loadContent(plugin.description);
+                pluginDesc.setMdString(plugin.description);
             }
             pluginDownloads.setText("下载量: " + plugin.downloads);
             pluginUpdate.setText("更新于: " + format.format(plugin.updateDate));
@@ -157,7 +167,14 @@ public class PluginPaneManager {
                         versionMap.putAll(versions);
                         Platform.runLater(() -> {
                             if (detail != null) {
-                                pluginDesc.getEngine().loadContent("<html><body>" + detail.description + "</body></html>");
+                                String html = "<html><body>" + detail.description + "</body></html>";
+                                MutableDataSet options = new MutableDataSet();
+                                options.set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
+                                StringBuilder content = new StringBuilder();
+                                for (String line : FlexmarkHtmlConverter.builder(options).build().convert(html).split("\n")) {
+                                    if (!line.contains("IMG\\]")) content.append(line + "\n");
+                                }
+                                pluginDesc.setMdString(content.toString());
                                 pluginCategory.setText("类别: " + detail.category);
                                 pluginAuthor.setText("作者: " + detail.author.name);
                             }

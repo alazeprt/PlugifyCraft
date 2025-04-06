@@ -7,6 +7,10 @@ module top.alazeprt.plugifycraft.plugifycraft {
     requires java.desktop;
     requires java.security.jgss;
     requires com.google.gson;
+    requires one.jpro.platform.mdfx;
+    requires flexmark.html2md.converter;
+    requires flexmark.util.data;
+    requires flexmark;
 
 
     opens top.alazeprt.plugifycraft to javafx.fxml;
