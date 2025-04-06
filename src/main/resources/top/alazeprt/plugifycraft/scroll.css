@@ -61,3 +61,11 @@
     -fx-border-color: #339af0;
     -fx-border-radius: 10px;
 }
+
+.slider > .track {
+    -fx-background-color: #a5d8ff;
+}
+
+.slider > .thumb {
+    -fx-background-color: #339af0;
+}

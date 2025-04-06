@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -45,7 +46,7 @@
             </JFXButton>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
+      <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
          <children>
             <ScrollPane layoutY="49.0" prefHeight="475.0" prefWidth="1040.0">
                <content>
@@ -79,7 +80,7 @@
             <TextField fx:id="searchField" layoutX="288.0" layoutY="12.0" prefHeight="24.0" prefWidth="180.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
+      <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
             <AnchorPane maxWidth="-Infinity" prefHeight="525.0" prefWidth="85.0" style="-fx-border-color: #4dabf7;">
                <children>
@@ -148,17 +149,25 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="520.0" prefWidth="1030.0">
                      <children>
-                        <Label layoutX="14.0" layoutY="14.0" text="收藏夹设置" underline="true">
+                        <Label layoutX="14.0" layoutY="97.0" text="收藏夹" underline="true">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label layoutX="14.0" layoutY="55.0" text="新建收藏夹: " />
-                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="51.0" prefWidth="150.0" promptText="收藏夹名称..." />
-                        <JFXButton layoutX="272.0" layoutY="51.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
-                        <Label layoutX="14.0" layoutY="95.0" text="删除收藏夹: " />
-                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="91.0" prefWidth="150.0" />
-                        <JFXButton layoutX="272.0" layoutY="91.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
+                        <Label layoutX="14.0" layoutY="138.0" text="新建收藏夹: " />
+                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="134.0" prefWidth="150.0" promptText="收藏夹名称..." />
+                        <JFXButton layoutX="272.0" layoutY="134.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
+                        <Label layoutX="14.0" layoutY="178.0" text="删除收藏夹: " />
+                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="174.0" prefWidth="150.0" />
+                        <JFXButton layoutX="272.0" layoutY="174.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
+                        <Label layoutX="14.0" layoutY="14.0" text="通用" underline="true">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="55.0" text="多线程下载数: " />
+                        <Slider fx:id="threadCount" layoutX="101.0" layoutY="54.0" majorTickUnit="9.0" max="64.0" min="1.0" prefHeight="43.0" prefWidth="300.0" showTickLabels="true" value="8.0" />
+                        <Label fx:id="threadCountLabel" layoutX="416.0" layoutY="55.0" text="8" />
                      </children>
                   </AnchorPane>
               </content>

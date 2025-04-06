@@ -1,11 +1,13 @@
 package top.alazeprt.plugifycraft;
 
+import com.google.gson.JsonElement;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -16,10 +18,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
-import top.alazeprt.plugifycraft.util.CacheManager;
-import top.alazeprt.plugifycraft.util.ManageManager;
-import top.alazeprt.plugifycraft.util.PluginPaneManager;
-import top.alazeprt.plugifycraft.util.StarManager;
+import top.alazeprt.plugifycraft.util.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +67,8 @@ public class PlugifyCraftController {
     public GridPane starPane;
 
     // settings
+    public Slider threadCount;
+    public Label threadCountLabel;
     public TextField createStarField;
     public ChoiceBox<String> deleteStarChoiceBox;
 
@@ -91,12 +92,13 @@ public class PlugifyCraftController {
         label.setLayoutY(22);
         loadDataLabel.setText("从 SpigotMC 获取数据中...");
         loadDataPane.setVisible(true);
-        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane);
+        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane, threadCount);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         manageManager = new ManageManager(downloadsPane);
         StarManager.load();
         CacheManager.load();
         manageManager.reload();
+        SettingsManager.load();
         starsChoice.getItems().addAll(StarManager.starMap.keySet());
         this.starFolders.getItems().addAll(StarManager.starMap.keySet());
         deleteStarChoiceBox.getItems().addAll(StarManager.starMap.keySet());
@@ -105,6 +107,10 @@ public class PlugifyCraftController {
         deleteStarChoiceBox.setValue("默认收藏夹");
         pluginPaneManager.mainPaneManager.add(exploreMain, manageMain, starMain, settingsMain, pluginViewPane);
         topPane.getChildren().add(label);
+        if (SettingsManager.get("threadCount") != null) {
+            threadCount.setValue(SettingsManager.get("threadCount").getAsInt());
+            threadCountLabel.setText(SettingsManager.get("threadCount").getAsString());
+        }
         new Thread(() -> {
             List<Plugin> list;
             try {
@@ -141,6 +147,10 @@ public class PlugifyCraftController {
             starPane.getChildren().clear();
             starManager.addAllDataToPane();
         });
+        threadCount.valueProperty().addListener(((observable, oldValue, newValue) -> {
+            threadCountLabel.setText(String.valueOf((int) threadCount.getValue()));
+            SettingsManager.setInt("threadCount", (int) threadCount.getValue());
+        }));
     }
 
 
@@ -292,7 +302,7 @@ public class PlugifyCraftController {
                     }
                 }
                 if (version == -1) continue;
-                CacheManager.download(plugin, version, file);
+                CacheManager.download(plugin, version, file, (int) threadCount.getValue());
             }
         }
     }

@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,13 +51,15 @@ public class PluginPaneManager {
     public Label label;
     public Label loadDataLabel;
 
+    public Slider threadCount;
+
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public static List<Thread> requestThreads = new ArrayList<>();
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
     public LinkedHashMap<String, Integer> versionMap = new LinkedHashMap<>();
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, WebView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -73,6 +76,7 @@ public class PluginPaneManager {
         this.versionChoice = versionChoice;
         this.loadDataLabel = loadDataLabel;
         this.loadDataPane = loadDataPane;
+        this.threadCount = threadCount;
     }
 
     public AnchorPane getPluginPane(Plugin plugin) {
@@ -192,7 +196,7 @@ public class PluginPaneManager {
             delayedLabel(label, Duration.ofSeconds(2));
             return;
         }
-        CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()));
+        CacheManager.download(nowViewingPlugin, versionMap.get(versionChoice.getValue()), new File(downloadPath.getText()), (int) threadCount.getValue());
     }
     
     public void search(boolean searchSpigotMC, boolean searchHangar, String content, GridPane explorePane) {

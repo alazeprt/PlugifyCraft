@@ -30,7 +30,7 @@ public class CacheManager {
         return "未知";
     }
 
-    public static boolean download(Plugin plugin, int version, File path) throws IOException {
+    public static boolean download(Plugin plugin, int version, File path, int threadCount) throws IOException {
         String platform = plugin instanceof SpigotPlugin ? "Spigot" : "Hangar";
         for (CachePlugin cachePlugin : cachePluginList) {
             if (cachePlugin.id() == plugin.id && cachePlugin.platform().equals(platform) &&
@@ -47,7 +47,7 @@ public class CacheManager {
             cacheDir.delete();
             cacheDir.mkdirs();
         }
-        DownloadInfo downloadInfo = new DownloadInfo(plugin, platform, plugin.id, version, path, 8);
+        DownloadInfo downloadInfo = new DownloadInfo(plugin, platform, plugin.id, version, path, threadCount);
         downloadQueue.add(downloadInfo);
         return false;
     }
