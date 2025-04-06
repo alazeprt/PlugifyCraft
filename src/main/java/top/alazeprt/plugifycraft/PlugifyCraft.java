@@ -3,6 +3,7 @@ package top.alazeprt.plugifycraft;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import top.alazeprt.pclib.repository.HangarRepository;
 import top.alazeprt.pclib.repository.SpigotMCRepository;
@@ -24,6 +25,7 @@ public class PlugifyCraft extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(PlugifyCraft.class.getResource("PlugifyCraft.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1040, 585);
         stage.setTitle("PlugifyCraft");
+        stage.getIcons().add(new Image(PlugifyCraft.class.getResourceAsStream("icon.png")));
         stage.setScene(scene);
         stage.show();
         stage.setOnCloseRequest(event -> {
