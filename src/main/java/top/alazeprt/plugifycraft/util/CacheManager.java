@@ -107,6 +107,7 @@ public class CacheManager {
         }
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(new InputStreamReader(new FileInputStream(cacheConfig), StandardCharsets.UTF_8), JsonObject.class);
+        if (jsonObject == null) return;
         jsonObject.entrySet().forEach(entry -> {
             String key = entry.getKey();
             JsonObject cacheObject = entry.getValue().getAsJsonObject();

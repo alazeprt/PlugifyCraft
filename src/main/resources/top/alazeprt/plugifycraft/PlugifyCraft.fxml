@@ -45,7 +45,7 @@
             </JFXButton>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
+      <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
             <ScrollPane layoutY="49.0" prefHeight="475.0" prefWidth="1040.0">
                <content>
@@ -79,16 +79,16 @@
             <TextField fx:id="searchField" layoutX="288.0" layoutY="12.0" prefHeight="24.0" prefWidth="180.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
+      <AnchorPane fx:id="manageMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
          <children>
-            <AnchorPane layoutX="-1.0" layoutY="-1.0" maxWidth="-Infinity" prefHeight="527.0" prefWidth="80.0" style="-fx-border-color: #4dabf7;">
+            <AnchorPane maxWidth="-Infinity" prefHeight="525.0" prefWidth="85.0" style="-fx-border-color: #4dabf7;">
                <children>
                   <JFXButton layoutX="2.0" layoutY="5.0" onAction="#onDownloadsPane" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: transparent;" text="下载任务" />
                </children>
             </AnchorPane>
-            <ScrollPane layoutX="84.0" prefHeight="525.0" prefWidth="960.0">
+            <ScrollPane layoutX="87.0" prefHeight="525.0" prefWidth="955.0">
                <content>
-                  <AnchorPane fx:id="managePane" prefHeight="527.0" prefWidth="957.0">
+                  <AnchorPane fx:id="managePane" prefHeight="527.0" prefWidth="955.0">
                      <children>
                         <GridPane fx:id="downloadsPane" layoutX="30.0" layoutY="30.0" prefHeight="230.0" prefWidth="865.0" vgap="60.0">
                           <columnConstraints>
