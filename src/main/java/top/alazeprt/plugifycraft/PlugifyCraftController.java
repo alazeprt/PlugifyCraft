@@ -1,10 +1,8 @@
 package top.alazeprt.plugifycraft;
 
-import com.google.gson.JsonElement;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -20,11 +18,14 @@ import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 import top.alazeprt.plugifycraft.util.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 
 import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
@@ -304,6 +305,16 @@ public class PlugifyCraftController {
                 if (version == -1) continue;
                 CacheManager.download(plugin, version, file, (int) threadCount.getValue());
             }
+        }
+    }
+
+    public void onOpenGitHub() {
+        // Open https://github.com/alazeprt/PlugifyCraft in default browser
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.browse(new URI("https://github.com/alazeprt/PlugifyCraft"));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

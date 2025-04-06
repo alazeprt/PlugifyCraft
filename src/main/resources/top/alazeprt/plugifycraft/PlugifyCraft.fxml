@@ -2,11 +2,13 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -19,31 +21,37 @@
    <children>
       <AnchorPane fx:id="topPane" prefHeight="60.0" prefWidth="1040.0" style="-fx-background-color: #228be6;">
          <children>
-            <Label layoutX="14.0" layoutY="14.0" text="PlugifyCraft" textFill="WHITE">
+            <Label layoutX="27.0" layoutY="14.0" text="PlugifyCraft" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <JFXButton layoutX="205.0" layoutY="12.5" onAction="#onExplorePane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="浏览" textFill="WHITE">
+            <JFXButton layoutX="218.0" layoutY="12.5" onAction="#onExplorePane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="浏览" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </JFXButton>
-            <JFXButton layoutX="385.0" layoutY="12.5" onAction="#onStarPane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="收藏" textFill="WHITE">
+            <JFXButton layoutX="398.0" layoutY="12.5" onAction="#onStarPane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="收藏" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </JFXButton>
-            <JFXButton layoutX="295.0" layoutY="12.5" onAction="#onManagePane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="管理" textFill="WHITE">
+            <JFXButton layoutX="308.0" layoutY="12.5" onAction="#onManagePane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="管理" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </JFXButton>
-            <JFXButton layoutX="475.0" layoutY="12.5" onAction="#onSettingsPane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="设置" textFill="WHITE">
+            <JFXButton layoutX="488.0" layoutY="12.5" onAction="#onSettingsPane" prefHeight="35.0" prefWidth="60.0" style="-fx-background-color: #2084DB;" text="设置" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </JFXButton>
+            <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="991.0" layoutY="13.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@github.png" />
+               </image>
+            </ImageView>
+            <Button onAction="#onOpenGitHub" layoutX="981.0" layoutY="13.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="35.0" style="-fx-opacity: 0;" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="exploreMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
