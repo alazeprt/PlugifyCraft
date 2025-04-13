@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
+<?import one.jpro.platform.mdfx.MarkdownView?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" stylesheets="@scroll.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
    <children>
       <AnchorPane fx:id="topPane" prefHeight="60.0" prefWidth="1040.0" style="-fx-background-color: #228be6;">
@@ -198,7 +199,7 @@
             <Label fx:id="pluginCategory" layoutX="826.0" layoutY="329.0" text="类别: " />
             <ScrollPane layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800">
                <AnchorPane style="-fx-background-color: #e7f5ff;">
-<!--                  <MarkdownView style="-fx-background-color: #e7f5ff;" fx:id="pluginDesc"/>-->
+                  <MarkdownView style="-fx-background-color: #e7f5ff;" fx:id="pluginDesc"/>
                </AnchorPane>
             </ScrollPane>
             <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="下载" />
