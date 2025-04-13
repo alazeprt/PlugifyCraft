@@ -13,7 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import one.jpro.platform.mdfx.MarkdownView;
@@ -55,14 +57,17 @@ public class PluginPaneManager {
     public Label loadDataLabel;
 
     public Slider threadCount;
+    public Slider pluginCount;
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public static List<Thread> requestThreads = new ArrayList<>();
     public PaneManager mainPaneManager = new PaneManager();
     public Plugin nowViewingPlugin;
     public LinkedHashMap<String, Integer> versionMap = new LinkedHashMap<>();
+
+    public int rowCount = 4;
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount, Slider pluginCount) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -80,6 +85,7 @@ public class PluginPaneManager {
         this.loadDataLabel = loadDataLabel;
         this.loadDataPane = loadDataPane;
         this.threadCount = threadCount;
+        this.pluginCount = pluginCount;
     }
 
     public AnchorPane getPluginPane(Plugin plugin) {
@@ -233,9 +239,9 @@ public class PluginPaneManager {
                 try {
                     if (content.isBlank()) {
                         int page = Math.abs(new Random().nextInt()%200)+1;
-                        list = spigotRepo.fastGetPlugins(15, page);
+                        list = spigotRepo.fastGetPlugins((int) pluginCount.getValue(), page);
                     } else {
-                        list = spigotRepo.fastSearch(content, 15);
+                        list = spigotRepo.fastSearch(content, (int) pluginCount.getValue());
                     }
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
@@ -255,9 +261,9 @@ public class PluginPaneManager {
                 try {
                     if (content.isBlank()) {
                         int page = Math.abs(new Random().nextInt()%600);
-                        list = hangarRepo.getPlugins(15, page);
+                        list = hangarRepo.getPlugins((int) pluginCount.getValue(), page);
                     } else {
-                        list = hangarRepo.search(content, 15);
+                        list = hangarRepo.search(content, (int) pluginCount.getValue());
                     }
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
@@ -275,8 +281,8 @@ public class PluginPaneManager {
             Thread thread = new Thread(() -> {
                 List<Plugin> list;
                 try {
-                    List<Plugin> spigotList = spigotRepo.fastSearch(content, 9);
-                    list = hangarRepo.search(content, 6);
+                    List<Plugin> spigotList = spigotRepo.fastSearch(content, (int) pluginCount.getValue()/2);
+                    list = hangarRepo.search(content, (int) pluginCount.getValue() - spigotList.size());
                     list.addAll(spigotList);
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
@@ -290,12 +296,17 @@ public class PluginPaneManager {
         }
     }
 
-    private void handlePaneList(GridPane explorePane, List<Plugin> list) {
+    public void handlePaneList(GridPane explorePane, List<Plugin> list) {
         List<Plugin> finalList = list;
         Platform.runLater(() -> {
             explorePane.getChildren().clear();
             pluginPanes.clear();
-            int maxRow = 5;
+            int maxRow = list.size() % 3 == 0 ? list.size() / 3 : list.size() / 3 + 1;
+            if (maxRow > rowCount) {
+                for (int i = rowCount; i < maxRow; i++) {
+                    addLine(explorePane);
+                }
+            }
             int maxCol = 3;
             int row = 0;
             int col = 0;
@@ -310,7 +321,6 @@ public class PluginPaneManager {
                     break;
                 }
             }
-            label.setVisible(false);
         });
     }
 
@@ -325,5 +335,8 @@ public class PluginPaneManager {
         }).start();
     }
 
-
+    public void addLine(GridPane pane) {
+        pane.setPrefHeight(pane.getPrefHeight() + 20 + 415/4.0);
+        pane.addRow(rowCount++);
+    }
 }

@@ -71,6 +71,8 @@ public class PlugifyCraftController {
     // settings
     public Slider threadCount;
     public Label threadCountLabel;
+    public Slider pluginCount;
+    public Label pluginCountLabel;
     public TextField createStarField;
     public ChoiceBox<String> deleteStarChoiceBox;
 
@@ -94,7 +96,7 @@ public class PlugifyCraftController {
         label.setLayoutY(22);
         loadDataLabel.setText("从 SpigotMC 获取数据中...");
         loadDataPane.setVisible(true);
-        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane, threadCount);
+        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane, threadCount, pluginCount);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         manageManager = new ManageManager(downloadsPane);
         StarManager.load();
@@ -113,30 +115,18 @@ public class PlugifyCraftController {
             threadCount.setValue(SettingsManager.get("threadCount").getAsInt());
             threadCountLabel.setText(SettingsManager.get("threadCount").getAsString());
         }
+        if (SettingsManager.get("pluginCount") != null) {
+            pluginCount.setValue(SettingsManager.get("pluginCount").getAsInt());
+            pluginCountLabel.setText(SettingsManager.get("pluginCount").getAsString());
+        }
         new Thread(() -> {
             List<Plugin> list;
             try {
                 int page = Math.abs(new Random().nextInt()%200)+1;
-                list = spigotRepo.fastGetPlugins(15, page);
+                list = spigotRepo.fastGetPlugins((int) pluginCount.getValue(), page);
                 List<Plugin> finalList = list;
                 Platform.runLater(() -> {
-                    explorePane.getChildren().remove(label);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(0)), 0, 0);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(1)), 1, 0);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(2)), 2, 0);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(3)), 0, 1);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(4)), 1, 1);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(5)), 2, 1);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(6)), 0, 2);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(7)), 1, 2);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(8)), 2, 2);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(9)), 0, 3);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(10)), 1, 3);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(11)), 2, 3);
-                    addLine(explorePane);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(12)), 0, 4);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(13)), 1, 4);
-                    explorePane.add(pluginPaneManager.getPluginPane(finalList.get(14)), 2, 4);
+                    pluginPaneManager.handlePaneList(explorePane, finalList);
                     loadDataPane.setVisible(false);
                 });
             } catch (IOException e) {
@@ -153,13 +143,10 @@ public class PlugifyCraftController {
             threadCountLabel.setText(String.valueOf((int) threadCount.getValue()));
             SettingsManager.setInt("threadCount", (int) threadCount.getValue());
         }));
-    }
-
-
-
-    public void addLine(GridPane pane) {
-        pane.setPrefHeight(pane.getPrefHeight() + 20 + 415/4.0);
-        pane.addRow(pane.getRowCount());
+        pluginCount.valueProperty().addListener(((observable, oldValue, newValue) -> {
+            pluginCountLabel.setText(String.valueOf((int) pluginCount.getValue()));
+            SettingsManager.setInt("pluginCount", (int) pluginCount.getValue());
+        }));
     }
 
     public void onSearch() {
