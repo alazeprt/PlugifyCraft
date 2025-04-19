@@ -1,6 +1,4 @@
 build-gradle-project:
-  image: azul/zulu-openjdk:21
-
   script:
     - chmod +x ./gradlew
     - ./gradlew --info --stacktrace build jlink jpackage
