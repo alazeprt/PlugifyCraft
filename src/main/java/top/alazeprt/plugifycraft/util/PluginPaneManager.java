@@ -58,6 +58,7 @@ public class PluginPaneManager {
 
     public Slider threadCount;
     public Slider pluginCount;
+    public TextField globalDLPath;
 
     public Map<AnchorPane, Plugin> pluginPanes = new HashMap<>();
     public static List<Thread> requestThreads = new ArrayList<>();
@@ -67,7 +68,7 @@ public class PluginPaneManager {
 
     public int rowCount = 4;
     
-    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount, Slider pluginCount) {
+    public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount, Slider pluginCount, TextField globalDLPath) {
         this.pluginViewPane = pluginViewPane;
         this.pluginIcon = pluginIcon;
         this.pluginTitle = pluginTitle;
@@ -86,6 +87,7 @@ public class PluginPaneManager {
         this.loadDataPane = loadDataPane;
         this.threadCount = threadCount;
         this.pluginCount = pluginCount;
+        this.globalDLPath = globalDLPath;
     }
 
     public AnchorPane getPluginPane(Plugin plugin) {
@@ -137,6 +139,9 @@ public class PluginPaneManager {
             loadDataPane.setVisible(true);
             loadDataPane.setLayoutY(202.5);
             loadDataLabel.setText("正在拉取插件详细信息...");
+            if (globalDLPath.getText() != null && !globalDLPath.getText().isBlank()) {
+                downloadPath.setText(globalDLPath.getText());
+            }
             pluginTitle.setText(plugin.name);
             pluginAuthor.setText("作者: " + plugin.author.name);
             pluginCategory.setText("类别: " + plugin.category);
@@ -178,7 +183,7 @@ public class PluginPaneManager {
                                 options.set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
                                 StringBuilder content = new StringBuilder();
                                 for (String line : FlexmarkHtmlConverter.builder(options).build().convert(html).split("\n")) {
-                                    if (!line.contains("IMG\\]")) content.append(line + "\n");
+                                    if (!line.toLowerCase().contains("img")) content.append(line + "\n");
                                 }
                                 pluginDesc.setMdString(content.toString());
                                 pluginCategory.setText("类别: " + detail.category);

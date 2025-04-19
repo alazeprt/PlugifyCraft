@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import one.jpro.platform.mdfx.*?>
 
-<?import one.jpro.platform.mdfx.MarkdownView?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" stylesheets="@scroll.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="1040.0" style="-fx-background-color: #e7f5ff;" stylesheets="@scroll.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.alazeprt.plugifycraft.PlugifyCraftController">
    <children>
       <AnchorPane fx:id="topPane" prefHeight="60.0" prefWidth="1040.0" style="-fx-background-color: #228be6;">
          <children>
@@ -151,23 +141,23 @@
             </ScrollPane>
             <JFXButton layoutX="870.0" layoutY="11.0" onAction="#onPluginDownloadAll" style="-fx-border-color: #4dabf7; -fx-border-radius: 5px" text="批量下载" />
          </children></AnchorPane>
-      <AnchorPane visible="false" fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0">
+      <AnchorPane fx:id="settingsMain" layoutY="60.0" prefHeight="525.0" prefWidth="1040.0" visible="false">
          <children>
             <ScrollPane prefHeight="525.0" prefWidth="1040.0">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="520.0" prefWidth="1030.0">
                      <children>
-                        <Label layoutX="14.0" layoutY="138.0" text="收藏夹" underline="true">
+                        <Label layoutX="14.0" layoutY="178.0" text="收藏夹" underline="true">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label layoutX="14.0" layoutY="179.0" text="新建收藏夹: " />
-                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="175.0" prefWidth="150.0" promptText="收藏夹名称..." />
-                        <JFXButton layoutX="272.0" layoutY="175.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
-                        <Label layoutX="14.0" layoutY="219.0" text="删除收藏夹: " />
-                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="215.0" prefWidth="150.0" />
-                        <JFXButton layoutX="272.0" layoutY="215.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
+                        <Label layoutX="14.0" layoutY="219.0" text="新建收藏夹: " />
+                        <TextField fx:id="createStarField" layoutX="96.0" layoutY="215.0" prefWidth="150.0" promptText="收藏夹名称..." />
+                        <JFXButton layoutX="272.0" layoutY="215.0" onAction="#onCreateStarFolder" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="点击创建" />
+                        <Label layoutX="14.0" layoutY="259.0" text="删除收藏夹: " />
+                        <ChoiceBox fx:id="deleteStarChoiceBox" layoutX="96.0" layoutY="255.0" prefWidth="150.0" />
+                        <JFXButton layoutX="272.0" layoutY="255.0" onAction="#onDeleteStarFolder" style="-fx-border-color: #ff6b6b; -fx-border-radius: 10px;" text="点击删除" />
                         <Label layoutX="14.0" layoutY="14.0" text="通用" underline="true">
                            <font>
                               <Font name="System Bold" size="20.0" />
@@ -179,6 +169,9 @@
                         <Label layoutX="14.0" layoutY="95.0" text="插件加载数量: " />
                         <Slider fx:id="pluginCount" layoutX="101.0" layoutY="94.0" majorTickUnit="9.0" max="66.0" min="3.0" prefHeight="43.0" prefWidth="300.0" showTickLabels="true" value="15.0" />
                         <Label fx:id="pluginCountLabel" layoutX="416.0" layoutY="95.0" text="15" />
+                        <Label layoutX="14.0" layoutY="135.0" text="默认下载路径: " />
+                        <TextField fx:id="globalDLPath" layoutX="101.0" layoutY="130.0" prefHeight="26.0" prefWidth="285.0" />
+                        <JFXButton layoutX="409.0" layoutY="130.0" mnemonicParsing="false" onAction="#onChooseGlobalDLPath" prefHeight="26.0" prefWidth="22.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="..." />
                      </children>
                   </AnchorPane>
               </content>
@@ -199,7 +192,7 @@
             <Label fx:id="pluginCategory" layoutX="826.0" layoutY="329.0" text="类别: " />
             <ScrollPane layoutX="14.0" layoutY="53.0" prefHeight="400" prefWidth="800">
                <AnchorPane style="-fx-background-color: #e7f5ff;">
-                  <MarkdownView style="-fx-background-color: #e7f5ff;" fx:id="pluginDesc"/>
+                  <MarkdownView fx:id="pluginDesc" style="-fx-background-color: #e7f5ff;" />
                </AnchorPane>
             </ScrollPane>
             <JFXButton layoutX="14.0" layoutY="463.0" onAction="#onPluginDownload" prefHeight="40.0" prefWidth="80.0" style="-fx-border-color: #339af0; -fx-border-radius: 10px;" text="下载" />

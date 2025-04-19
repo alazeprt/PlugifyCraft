@@ -73,6 +73,7 @@ public class PlugifyCraftController {
     public Label threadCountLabel;
     public Slider pluginCount;
     public Label pluginCountLabel;
+    public TextField globalDLPath;
     public TextField createStarField;
     public ChoiceBox<String> deleteStarChoiceBox;
 
@@ -96,7 +97,7 @@ public class PlugifyCraftController {
         label.setLayoutY(22);
         loadDataLabel.setText("从 SpigotMC 获取数据中...");
         loadDataPane.setVisible(true);
-        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane, threadCount, pluginCount);
+        pluginPaneManager = new PluginPaneManager(pluginViewPane, pluginIcon, pluginTitle, pluginAuthor, pluginDesc, pluginDownloads, pluginUpdate, pluginRelease, pluginCategory, starsChoice, downloadPath, starButton, label, versionChoice, loadDataLabel, loadDataPane, threadCount, pluginCount, globalDLPath);
         starManager = new StarManager(starPane, label, starFolders, pluginPaneManager);
         manageManager = new ManageManager(downloadsPane);
         StarManager.load();
@@ -118,6 +119,9 @@ public class PlugifyCraftController {
         if (SettingsManager.get("pluginCount") != null) {
             pluginCount.setValue(SettingsManager.get("pluginCount").getAsInt());
             pluginCountLabel.setText(SettingsManager.get("pluginCount").getAsString());
+        }
+        if (SettingsManager.get("globalDownloadPath") != null) {
+            globalDLPath.setText(SettingsManager.get("globalDownloadPath").getAsString());
         }
         new Thread(() -> {
             List<Plugin> list;
@@ -208,6 +212,16 @@ public class PlugifyCraftController {
         File file = directoryChooser.showDialog(null);
         if (file != null) {
             downloadPath.setText(file.getAbsolutePath());
+        }
+    }
+
+    public void onChooseGlobalDLPath() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("选择下载路径");
+        File file = directoryChooser.showDialog(null);
+        if (file != null) {
+            globalDLPath.setText(file.getAbsolutePath());
+            SettingsManager.setString("globalDownloadPath", file.getAbsolutePath());
         }
     }
 
