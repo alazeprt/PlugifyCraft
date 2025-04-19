@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import one.jpro.platform.mdfx.MarkdownView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 import top.alazeprt.plugifycraft.util.*;
@@ -89,7 +91,10 @@ public class PlugifyCraftController {
     public StarManager starManager;
     public ManageManager manageManager;
 
+    Logger logger = LoggerFactory.getLogger(PlugifyCraftController.class);
+
     public void initialize() throws IOException, ParseException {
+        logger.info("Initializing software...");
         label = new Label("");
         label.setFont(Font.font("System", 12));
         label.setTextFill(Color.WHITE);
@@ -115,6 +120,7 @@ public class PlugifyCraftController {
         if (SettingsManager.get("threadCount") != null) {
             threadCount.setValue(SettingsManager.get("threadCount").getAsInt());
             threadCountLabel.setText(SettingsManager.get("threadCount").getAsString());
+            logger.debug("Read");
         }
         if (SettingsManager.get("pluginCount") != null) {
             pluginCount.setValue(SettingsManager.get("pluginCount").getAsInt());
@@ -128,13 +134,14 @@ public class PlugifyCraftController {
             try {
                 int page = Math.abs(new Random().nextInt()%200)+1;
                 list = spigotRepo.fastGetPlugins((int) pluginCount.getValue(), page);
+                logger.info("Getting data from SpigotMC ({} plugins)", (int) pluginCount.getValue());
                 List<Plugin> finalList = list;
                 Platform.runLater(() -> {
                     pluginPaneManager.handlePaneList(explorePane, finalList);
                     loadDataPane.setVisible(false);
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Failed to load plugins from SpigotMC", e);
                 Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
             }
         }).start();
@@ -249,6 +256,7 @@ public class PlugifyCraftController {
             label.setLayoutY(22);
             pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
         } else {
+            logger.info("Creating new stars folder {}...", createStarField.getText());
             StarManager.createFolder(createStarField.getText());
             resetStarFolders();
         }
@@ -274,6 +282,7 @@ public class PlugifyCraftController {
             label.setLayoutY(22);
             pluginPaneManager.delayedLabel(label, Duration.ofSeconds(2));
         } else {
+            logger.info("Deleting stars folder {}...");
             StarManager.starMap.remove(deleteStarChoiceBox.getValue());
             resetStarFolders();
         }
@@ -289,6 +298,7 @@ public class PlugifyCraftController {
         File file = directoryChooser.showDialog(null);
         if (file != null) {
             List<Plugin> plugins = starManager.getAllData();
+            logger.info("Batch download plugins: {}", Arrays.toString(plugins.stream().map(plugin -> plugin.name).toArray()));
             for (Plugin plugin : plugins) {
                 int version = -1;
                 if (plugin instanceof SpigotPlugin) {
@@ -316,7 +326,7 @@ public class PlugifyCraftController {
         try {
             desktop.browse(new URI("https://github.com/alazeprt/PlugifyCraft"));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("Failed to open web browser for user", e);
         }
     }
 }

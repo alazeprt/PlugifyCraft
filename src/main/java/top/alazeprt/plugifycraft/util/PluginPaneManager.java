@@ -19,6 +19,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import one.jpro.platform.mdfx.MarkdownView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.alazeprt.pclib.util.Plugin;
 import top.alazeprt.pclib.util.SpigotPlugin;
 
@@ -67,6 +69,7 @@ public class PluginPaneManager {
     public LinkedHashMap<String, Integer> versionMap = new LinkedHashMap<>();
 
     public int rowCount = 4;
+    final Logger logger = LoggerFactory.getLogger(PluginPaneManager.class);
     
     public PluginPaneManager(AnchorPane pluginViewPane, ImageView pluginIcon, Label pluginTitle, Label pluginAuthor, MarkdownView pluginDesc, Label pluginDownloads, Label pluginUpdate, Label pluginRelease, Label pluginCategory, ChoiceBox<String> starsChoice, TextField downloadPath, JFXButton starButton, Label label, ChoiceBox<String> versionChoice, Label loadDataLabel, AnchorPane loadDataPane, Slider threadCount, Slider pluginCount, TextField globalDLPath) {
         this.pluginViewPane = pluginViewPane;
@@ -134,6 +137,7 @@ public class PluginPaneManager {
         anchorPane.getChildren().add(icon);
         anchorPane.getChildren().add(update);
         anchorPane.setOnMouseClicked((event) -> {
+            logger.info("Getting plugin detailed info (plugin named {})", plugin.name);
             nowViewingPlugin = plugin;
             mainPaneManager.handleMainPane(pluginViewPane);
             loadDataPane.setVisible(true);
@@ -170,6 +174,7 @@ public class PluginPaneManager {
             pluginIcon.setImage(new Image(new ByteArrayInputStream(Base64.getDecoder().decode(plugin.image.getBytes(StandardCharsets.UTF_8)))));
             versionMap.clear();
             Thread thread = new Thread(() -> {
+                logger.info("Getting plugin version info (plugin named {})", plugin.name);
                 Plugin plugin1 = pluginPanes.get(anchorPane);
                 try {
                     if (plugin1 instanceof SpigotPlugin) {
@@ -203,7 +208,7 @@ public class PluginPaneManager {
                     });
                     delayedLabel(label, Duration.ofSeconds(2));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Failed to get plugin versions info (plugin named {})", plugin.name, e);
                     Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 } catch (CancellationException ignored) {}
             });
@@ -236,6 +241,7 @@ public class PluginPaneManager {
         if (!searchSpigotMC && !searchHangar) {
             loadDataLabel.setText("你未选择任何数据来源!");
         } else if (searchSpigotMC && !searchHangar) {
+            logger.info("Searching data from SpigotMC with keyword '{}'", content);
             loadDataLabel.setText("搜索数据中...");
             loadDataPane.setVisible(true);
             loadDataPane.setLayoutY(247.5);
@@ -251,13 +257,14 @@ public class PluginPaneManager {
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Failed to search data from SpigotMC", e);
                     Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });
             thread.start();
             requestThreads.add(thread);
         } else if (!searchSpigotMC && searchHangar) {
+            logger.info("Searching data from Hangar with keyword '{}'", content);
             loadDataLabel.setText("搜索数据中...");
             loadDataPane.setVisible(true);
             loadDataPane.setLayoutY(247.5);
@@ -273,13 +280,14 @@ public class PluginPaneManager {
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Failed to search data from Hangar", e);
                     Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });
             thread.start();
             requestThreads.add(thread);
         } else {
+            logger.info("Searching data from SpigotMC and Hangar with keyword '{}'", content);
             loadDataLabel.setText("搜索数据中 (选择多个数据源可能会有重复插件)...");
             loadDataPane.setVisible(true);
             loadDataPane.setLayoutY(247.5);
@@ -292,7 +300,7 @@ public class PluginPaneManager {
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Failed to search data from SpigotMC and Hangar", e);
                     Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
                 }
             });

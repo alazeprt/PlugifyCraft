@@ -5,6 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -14,11 +16,14 @@ import static top.alazeprt.plugifycraft.util.CacheManager.downloadThread;
 public class ManageManager {
     public GridPane downloadsPane;
 
+    final Logger logger = LoggerFactory.getLogger(ManageManager.class);
+
     public ManageManager(GridPane downloadsPane) {
         this.downloadsPane = downloadsPane;
     }
 
     public void reload() {
+        logger.debug("Reloading downloads pane...");
         downloadsPane.getChildren().clear();
         int newSize = CacheManager.completedQueue.size() + CacheManager.downloadQueue.size() +
                 (currentDownloadInfo == null ? 0 : 1);

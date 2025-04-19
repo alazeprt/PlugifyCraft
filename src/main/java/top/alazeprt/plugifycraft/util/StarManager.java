@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.alazeprt.pclib.util.Author;
 import top.alazeprt.pclib.util.HangarPlugin;
 import top.alazeprt.pclib.util.Plugin;
@@ -29,6 +31,8 @@ import static top.alazeprt.plugifycraft.PlugifyCraft.hangarRepo;
 import static top.alazeprt.plugifycraft.PlugifyCraft.spigotRepo;
 
 public class StarManager {
+
+    static final Logger logger = LoggerFactory.getLogger(StarManager.class);
 
     // instance
 
@@ -75,6 +79,7 @@ public class StarManager {
     }
 
     public void addSearchDataToPane(String keyword) {
+        logger.info("Searching data in stars folder {} with keyword {}", starFolders.getValue(), keyword);
         List<Plugin> oldStars = StarManager.getFolder(starFolders.getValue());
         List<Plugin> stars = new ArrayList<>();
         for (Plugin plugin : oldStars) {
@@ -112,6 +117,7 @@ public class StarManager {
     public static Thread thread;
 
     public static void handle(String folder, Plugin plugin) {
+        logger.info("Plugin {} was starred in folder {}", plugin.name, folder);
         if (!starMap.containsKey(folder) || starMap.get(folder) == null || starMap.get(folder).isEmpty()) {
             List<Plugin> list = new ArrayList<>();
             list.add(plugin);
@@ -146,6 +152,7 @@ public class StarManager {
     }
 
     public static void save() throws IOException {
+        logger.info("Saving stars to file...");
         if (thread != null && !thread.isInterrupted()) thread.interrupt();
         File folder = new File(".plugifycraft");
         folder.mkdirs();
@@ -158,6 +165,7 @@ public class StarManager {
         for (Map.Entry<String, List<Plugin>> entry : starMap.entrySet()) {
             List<JsonObject> plugins = new ArrayList<>();
             for (Plugin plugin : entry.getValue()) {
+                logger.debug("Saving plugin {} to file...", plugin.name);
                 JsonObject jsonObject1 = new JsonObject();
                 jsonObject1.addProperty("id", plugin.id);
                 jsonObject1.addProperty("name", plugin.name);
@@ -177,15 +185,18 @@ public class StarManager {
     }
 
     public static void load() throws IOException, ParseException {
+        logger.info("Loading stars from file...");
         File folder = new File(".plugifycraft");
         File file = new File(folder, "stars.json");
         if (file.exists()) {
+            logger.info("Stars file found, loading data...");
             String json = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                 List<Plugin> plugins = new ArrayList<>();
                 for (JsonElement jsonElement : entry.getValue().getAsJsonArray()) {
+                    logger.debug("Found plugin from " + entry.getKey() + ": " + jsonElement.getAsJsonObject().get("name").getAsString());
                     JsonObject jsonObject1 = jsonElement.getAsJsonObject();
                     int id = jsonObject1.get("id").getAsInt();
                     String platform = jsonObject1.get("platform").getAsString();
@@ -239,6 +250,7 @@ public class StarManager {
             });
             thread.start();
         } else {
+            logger.info("Stars file not found, adding default folder...");
             starMap.put("默认收藏夹", new ArrayList<>());
         }
     }

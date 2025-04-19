@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.alazeprt.pclib.repository.HangarRepository;
 import top.alazeprt.pclib.repository.SpigotMCRepository;
 import top.alazeprt.plugifycraft.util.CacheManager;
@@ -20,6 +22,8 @@ public class PlugifyCraft extends Application {
 
     public static final HangarRepository hangarRepo = new HangarRepository();
 
+    final Logger logger = LoggerFactory.getLogger(PlugifyCraft.class);
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PlugifyCraft.class.getResource("PlugifyCraft.fxml"));
@@ -30,13 +34,14 @@ public class PlugifyCraft extends Application {
         stage.show();
         stage.setOnCloseRequest(event -> {
             try {
+                logger.info("Closing application and saving data...");
                 StarManager.save();
                 CacheManager.save();
                 SettingsManager.save();
                 PluginPaneManager.requestThreads.forEach(Thread::interrupt);
                 System.exit(0);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("Failed to save data when exiting", e);
             }
         });
         stage.setResizable(false);

@@ -11,6 +11,7 @@ module top.alazeprt.plugifycraft.plugifycraft {
     requires flexmark.html2md.converter;
     requires flexmark.util.data;
     requires flexmark;
+    requires org.slf4j;
 
 
     opens top.alazeprt.plugifycraft to javafx.fxml;
