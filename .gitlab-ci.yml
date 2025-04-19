@@ -1,5 +1,5 @@
 build-gradle-project:
-  image: eclipse-temurin:latest
+  image: azul/zulu-openjdk:21
 
   script:
     - ./gradlew build
