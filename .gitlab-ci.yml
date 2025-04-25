@@ -1,8 +1,0 @@
-build-gradle-project:
-  script:
-    - chmod +x ./gradlew
-    - ./gradlew --info --stacktrace build jlink jpackage
-
-  artifacts:
-    paths:
-      - build/installer
