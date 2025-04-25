@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -241,6 +243,81 @@ public class PluginPaneManager {
         if (!searchSpigotMC && !searchHangar) {
             loadDataLabel.setText("你未选择任何数据来源!");
         } else if (searchSpigotMC && !searchHangar) {
+            if (content.contains("url=")) {
+                loadDataLabel.setText("获取插件中...");
+                loadDataPane.setVisible(true);
+                loadDataPane.setLayoutY(247.5);
+                try {
+                    String urlString = content.split("url=")[1].split(" ")[0];
+                    if (urlString.endsWith("/")) {
+                        urlString = urlString.substring(0, urlString.length() - 1);
+                    }
+                    URL url = new URL(urlString);
+                    if (url.getHost().equals("spigotmc.org") || url.getHost().equals("www.spigotmc.org")) {
+                        String[] paths = url.getPath().split("/");
+                        String[] resources = paths[paths.length - 1].split("\\.");
+                        int id = Integer.parseInt(resources[resources.length - 1]);
+                        Thread thread = new Thread(() -> {
+                            try {
+                                Plugin plugin = spigotRepo.getPlugin(id);
+                                Map<String, Integer> versions = spigotRepo.getVersions(plugin.id);
+                                nowViewingPlugin = plugin;
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                Platform.runLater(() -> {
+                                    mainPaneManager.handleMainPane(pluginViewPane);
+                                    pluginTitle.setText(plugin.name);
+                                    pluginAuthor.setText("作者: " + plugin.author.name);
+                                    pluginCategory.setText("类别: " + plugin.category);
+                                    pluginDownloads.setText("下载量: " + plugin.downloads);
+                                    pluginUpdate.setText("更新于: " + format.format(plugin.updateDate));
+                                    pluginRelease.setText("发布于: " + format.format(plugin.releaseDate));
+                                    if (!StarManager.isStarred(starsChoice.getValue(), nowViewingPlugin)) {
+                                        starButton.setText("收藏");
+                                        starButton.setStyle("-fx-border-color: #339af0; -fx-border-radius: 10px;");
+                                    } else {
+                                        starButton.setText("取消收藏");
+                                        starButton.setStyle("-fx-border-color: #ff6b6b; -fx-border-radius: 10px;");
+                                    }
+                                    pluginIcon.setImage(new Image(new ByteArrayInputStream(Base64.getDecoder().decode(plugin.image.getBytes(StandardCharsets.UTF_8)))));
+                                    versionMap.clear();
+                                    versionMap.putAll(versions);
+                                    String html = "<html><body>" + plugin.description + "</body></html>";
+                                    MutableDataSet options = new MutableDataSet();
+                                    options.set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
+                                    StringBuilder content2 = new StringBuilder();
+                                    for (String line : FlexmarkHtmlConverter.builder(options).build().convert(html).split("\n")) {
+                                        if (!line.toLowerCase().contains("img")) content2.append(line + "\n");
+                                    }
+                                    pluginDesc.setMdString(content2.toString());
+                                    pluginCategory.setText("类别: " + plugin.category);
+                                    pluginAuthor.setText("作者: " + plugin.author.name);
+                                    Platform.runLater(() -> {
+                                        versionChoice.getItems().clear();
+                                        versionMap.keySet().forEach(version -> {
+                                            versionChoice.getItems().add(version);
+                                        });
+                                        loadDataPane.setVisible(false);
+                                    });
+                                });
+                            } catch (IOException e) {
+                                logger.error("Failed to get plugin info (plugin named {})", id, e);
+                                Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
+                            }
+                        });
+                        thread.start();
+                        requestThreads.add(thread);
+                    } else {
+                        Platform.runLater(() -> loadDataLabel.setText("你输入的URL的域名不正确!"));
+                    }
+                } catch (MalformedURLException e) {
+                    logger.error("Malformed URL: " + content.split("url=")[1].split(" ")[0]);
+                    Platform.runLater(() -> loadDataLabel.setText("获取数据失败, 请检查网络连接"));
+                } catch (NumberFormatException e) {
+                    logger.error("Malformed URL: " + content.split("url=")[1].split(" ")[0]);
+                    Platform.runLater(() -> loadDataLabel.setText("你输入的URL中获取的id不正确!"));
+                }
+                return;
+            }
             logger.info("Searching data from SpigotMC with keyword '{}'", content);
             loadDataLabel.setText("搜索数据中...");
             loadDataPane.setVisible(true);
