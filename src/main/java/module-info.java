@@ -12,6 +12,8 @@ module top.alazeprt.plugifycraft.plugifycraft {
     requires flexmark.util.data;
     requires flexmark;
     requires org.slf4j;
+    requires ch.qos.logback.classic;
+    requires ch.qos.logback.core;
 
 
     opens top.alazeprt.plugifycraft to javafx.fxml;

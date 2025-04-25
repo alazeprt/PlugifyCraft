@@ -38,16 +38,17 @@ javafx {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.12.1'
-    implementation 'com.github.alazeprt:PlugifyCraftLib:1.16'
+    implementation 'com.github.alazeprt:PlugifyCraftLib:1.17'
     implementation 'com.jfoenix:jfoenix:9.0.10'
     implementation 'one.jpro.platform:jpro-mdfx:0.5.6'
     implementation 'com.vladsch.flexmark:flexmark-html2md-converter:0.64.8'
     implementation 'ch.qos.logback:logback-classic:1.5.18'
+    implementation 'ch.qos.logback:logback-core:1.5.18'
 }
 
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--add-modules', 'ch.qos.logback.classic,ch.qos.logback.core']
     launcher {
         name = 'PlugifyCraft'
         jvmArgs = ['-Dfile.encoding=UTF-8']
@@ -68,8 +69,8 @@ jlink {
     mergedModule {
         requires('com.google.gson')
         requires('org.slf4j')
-        requires('ch.qos.logback.classic')
-        requires('ch.qos.logback.core')
+//        requires('ch.qos.logback.classic')
+//        requires('ch.qos.logback.core')
         requires('jdk.crypto.ec')
     }
 }

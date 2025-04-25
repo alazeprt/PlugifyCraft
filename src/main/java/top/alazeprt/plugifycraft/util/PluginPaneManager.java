@@ -273,9 +273,9 @@ public class PluginPaneManager {
                 try {
                     if (content.isBlank()) {
                         int page = Math.abs(new Random().nextInt()%600);
-                        list = hangarRepo.getPlugins((int) pluginCount.getValue(), page);
+                        list = hangarRepo.fastGetPlugins((int) pluginCount.getValue(), page);
                     } else {
-                        list = hangarRepo.search(content, (int) pluginCount.getValue());
+                        list = hangarRepo.fastSearch(content, (int) pluginCount.getValue());
                     }
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
@@ -295,7 +295,7 @@ public class PluginPaneManager {
                 List<Plugin> list;
                 try {
                     List<Plugin> spigotList = spigotRepo.fastSearch(content, (int) pluginCount.getValue()/2);
-                    list = hangarRepo.search(content, (int) pluginCount.getValue() - spigotList.size());
+                    list = hangarRepo.fastSearch(content, (int) pluginCount.getValue() - spigotList.size());
                     list.addAll(spigotList);
                     handlePaneList(explorePane, list);
                     Platform.runLater(() -> loadDataPane.setVisible(false));
