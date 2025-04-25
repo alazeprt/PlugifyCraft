@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.vladsch.flexmark:flexmark-html2md-converter:0.64.8'
     implementation 'ch.qos.logback:logback-classic:1.5.18'
     implementation 'ch.qos.logback:logback-core:1.5.18'
+    implementation 'org.yaml:snakeyaml:2.4'
 }
 
 jlink {
@@ -69,9 +70,8 @@ jlink {
     mergedModule {
         requires('com.google.gson')
         requires('org.slf4j')
-//        requires('ch.qos.logback.classic')
-//        requires('ch.qos.logback.core')
         requires('jdk.crypto.ec')
+        requires('org.yaml.snakeyaml')
     }
 }
 
