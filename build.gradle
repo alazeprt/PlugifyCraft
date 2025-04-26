@@ -59,6 +59,7 @@ jlink {
         appVersion = version.toString()
         icon = file('src/main/resources/top/alazeprt/plugifycraft/icon.ico')
         installerOutputDir = file("$buildDir/installer")
+        vendor = 'Alazeprt'
         if(org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             installerOptions.add("--win-dir-chooser")
             installerOptions.add("--win-per-user-install")
