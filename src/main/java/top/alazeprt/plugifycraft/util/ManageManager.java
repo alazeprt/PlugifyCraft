@@ -18,6 +18,8 @@ public class ManageManager {
 
     final Logger logger = LoggerFactory.getLogger(ManageManager.class);
 
+    int rowCount = 2;
+
     public ManageManager(GridPane downloadsPane) {
         this.downloadsPane = downloadsPane;
     }
@@ -27,8 +29,11 @@ public class ManageManager {
         downloadsPane.getChildren().clear();
         int newSize = CacheManager.completedQueue.size() + CacheManager.downloadQueue.size() +
                 (currentDownloadInfo == null ? 0 : 1);
-        if (newSize > downloadsPane.getRowCount()) {
-            for (int i = 1; i <= newSize - downloadsPane.getRowCount(); i++) addLine();
+        if (newSize > rowCount) {
+            for (int i = 1; i <= newSize - rowCount; i++) {
+                addLine();
+            }
+            rowCount = newSize;
         }
         downloadsPane.getChildren().clear();
         for (DownloadInfo downloadInfo : CacheManager.completedQueue) {

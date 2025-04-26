@@ -50,7 +50,6 @@ public class PlugifyCraft extends Application {
                 StarManager.save();
                 CacheManager.save();
                 SettingsManager.save();
-                PluginPaneManager.requestThreads.forEach(Thread::interrupt);
                 System.exit(0);
             } catch (IOException e) {
                 logger.error("Failed to save data when exiting", e);
